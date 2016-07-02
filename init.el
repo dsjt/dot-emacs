@@ -278,7 +278,6 @@
 
 ;; org-mode
 (el-get-bundle 'org)
-; (load  "~/.emacs.d/elpa/org-20160627/org-compat.el")
 (setq org-startup-folded nil)
 (setq org-hide-leading-stars t)
 (setq org-log-done 'time)
@@ -291,9 +290,11 @@
                          ("f" . (org-forward-heading-same-level 1))
                          ("b" . (org-backward-heading-same-level 1))
                          ("<tab>" . (org-cycle))))
+(setq org-global-properties
+      '(("Effort_ALL" . "00:10 00:20 00:30 01:00 01:30 02:00 02:30 03:00")))
 (global-set-key (kbd "C-c l") 'org-store-link)
 (define-key org-mode-map (kbd "C-,") 'other-window-or-split)
-(global-set-key "\C-cc" 'org-capture)
+(global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
 (add-hook 'org-mode-hook 'turn-on-font-lock)
@@ -308,36 +309,20 @@
 ;; org-agenda
 ;; http://hpcgi1.nifty.com/spen/index.cgi?OrgMode%2fOrg%2dmode%a4%c7GTD%bc%c2%c1%a9%a1%ca%cb%dd%cc%f5%a1%cb
 (setq org-agenda-custom-commands
-      '(("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
-        ("H" "Office and Home Lists"
-         ((agenda "" ((org-agenda-ndays 1)))
-          (tags "Buckets")
-          (todo "TODO" ((org-agenda-tags-todo-honor-ignore-options t)
-                        (org-agenda-todo-ignore-scheduled 'all)))))
-        ("D" "Daily Action List"
-         ((agenda "" ((org-agenda-ndays 1)
-                      ;; (org-agenda-sorting-strategy
-                      ;;  (quote ((agenda time-up priority-down tag-up))))
-                      (org-deadline-warning-days 0)
-                      (org-agenda-log-mode 1)))))
-        ("W" "Weekly Review"
-         ((agenda "" ((org-agenda-ndays 1)
-                      (org-deadline-warning-days 100)
-                      (org-agenda-use-time-grid nil)
-                      (org-agenda-todo-list-sublevels nil)))
-          (todo "TODO" ((org-agenda-todo-list-sublevels t)))))
-        ("o" "Originally Daily List"
-         ((agenda "" ((org-agenda-ndays 3)
-                      (org-deadline-warning-days 7)
-                      (org-agenda-log-mode-items '(closed state))
-                      (org-agenda-show-log t)))
-          (tags "Buckets")))
-        ("O" "Originally Daily List"
-         ((agenda "" ((org-agenda-ndays 3)
-                      (org-deadline-warning-days 7)
-                      (org-agenda-log-mode-items '(state))
-                      (org-agenda-show-log t)))
-          (tags "Buckets")))))
+      (("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
+        ("d" "4 days agenda"
+         ((agenda "TODO" ((org-agenda-ndays 4)
+                          (org-agenda-start-day "-1")
+                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
+                          (org-agenda-show-log t)
+                          (org-agenda-log-mode-items '(closed state))))
+          (tags "buckets")))
+        ("w" "8 days agenda"
+         ((agenda "TODO" ((org-agenda-ndays 8)
+                          (org-agenda-start-day "-1")
+                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
+                          ))))))
+(setq org-agenda-columns-add-appointments-to-effort-sum t)
 (add-hook 'org-timer-set-hook 'org-clock-in)
 (add-hook 'org-timer-done-hook 'org-clock-out)
 (add-hook 'org-timer-stop-hook 'org-clock-out)
@@ -372,7 +357,8 @@
         (holiday-fixed 12 23 "天皇誕生日")))
 
 ;; column
-(setq org-columns-default-format "%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %14Effort(Time){:} %6CLOCKSUM{Total}")
+(setq org-columns-default-format
+      "%50ITEM{Task} %TODO %8EFFORT{:} %6CLOCKSUM{Total}")
 
 ;; export
 ;; org->latex
@@ -409,6 +395,8 @@
         (http . t)
         (ruby . t)
         (python . t)))
+(define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
+(define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
 ;; ob-python
 (el-get-bundle 'f)
 ;; (el-get-bundle! 'gregsexton/ob-ipython)
@@ -418,12 +406,12 @@
 (autoload 'org-babel-execute:python "ob-python.el")
 (setq org-babel-python-command "python3")
 (setq org-src-preserve-indentation t)
+(setq org-babel-confirm-evaluate nil)
 
 ;; ob-http
 (el-get-bundle 'ob-http)
 (setq org-confirm-babel-evaluate nil)
 
-(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 ;;;###autoload
 (defun my/toggle-yatex-mode-temporarily ()
   (interactive)
@@ -496,7 +484,7 @@
       howm-menu-expiry-hours 2                       ;; メニューを 2 時間キャッシュ
       howm-menu-schedule-days-before 10              ;; 10 日前から
       howm-menu-schedule-days 7                      ;; 3 日後まで
-      howm-file-name-format "%Y/%m/%Y-%m-%d-%H.howm" ;; howm のファイル名
+      howm-file-name-format "%Y/%m/%d-%H%M%S.org" ;; howm のファイル名
       howm-view-grep-parse-line
       "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$"
       howm-excluded-file-regexp
@@ -513,8 +501,6 @@
 (set-face-attribute 'howm-mode-title-face nil :foreground nil)
 (set-face-attribute 'howm-reminder-today-face nil :foreground nil :background "#2d37aa" :box nil)
 (set-face-attribute 'howm-reminder-tomorrow-face nil :foreground nil :background "#2d4900" :box nil)
-(define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
-(define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
 
 ;; face
 (custom-set-faces
