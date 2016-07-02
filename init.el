@@ -737,6 +737,12 @@
 (setq python-shell-interpreter "python3")
 (setq python-shell-interpreter-args "-i")
 
+;; jedi
+(el-get-bundle 'jedi)
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'jedi:ac-setup)
+(setq jedi:complete-on-dot t)
+
 ;; quickrun
 (el-get-bundle 'quickrun)
 (global-set-key (kbd "C-l r") 'quickrun)
@@ -762,12 +768,6 @@
 (ac-config-default)
 (global-auto-complete-mode 1)
 (add-to-list 'ac-modes 'YaTeX-mode)
-
-;; jedi
-(el-get-bundle 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
-(add-hook 'python-mode-hook 'jedi:ac-setup)
-(setq jedi:complete-on-dot t)
 
 ;; clang-format
 (require 'clang-format)
