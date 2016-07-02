@@ -1,3 +1,8 @@
+;; for mac
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier (quote meta))
+  (setq mac-option-modifier (quote super)))
+
 ;; el-get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (unless (require 'el-get nil 'noerror)
