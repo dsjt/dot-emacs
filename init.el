@@ -220,7 +220,36 @@
 ;; howm
 (add-to-list 'load-path "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/.emacs.d/site-lisp/")
 (setq howm-directory "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/howm/")
-(load "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/.emacs.d/inits/24_howm.el")
+(global-unset-key (kbd "C-q"))
+(setq howm-prefix "\C-q"
+      howm-view-title-header "*"
+      howm-menu-lang 'ja
+      howm-keyword-case-fold-search t)
+(el-get-bundle! howm) ; 上との順序，重要なので変更しない
+(setq howm-list-recent-title t                       ;; 「最近のメモ」一覧時にタイトル表示
+      howm-list-all-title t                          ;; 全メモ一覧時にタイトル表示
+      howm-menu-expiry-hours 2                       ;; メニューを 2 時間キャッシュ
+      howm-menu-schedule-days-before 10              ;; 10 日前から
+      howm-menu-schedule-days 7                      ;; 3 日後まで
+      howm-file-name-format "%Y/%m/%Y-%m-%d-%H.howm" ;; howm のファイル名
+      howm-view-grep-parse-line
+      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$"
+      howm-excluded-file-regexp
+      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$"
+      howm-menu-refresh-after-save nil
+      howm-view-summary-persistent nil
+      howm-template "* %cursor\n"
+      howm-template-file-format "[[%s]]"
+      howm-view-use-grep t
+      howm-menu-recent-num 10
+      howm-list-recent-days 20)
+(add-to-list 'auto-mode-alist '("\\.howm$" . org-mode))
+(add-hook 'org-mode-hook 'howm-mode)
+(set-face-attribute 'howm-mode-title-face nil :foreground nil)
+(set-face-attribute 'howm-reminder-today-face nil :foreground nil :background "#2d37aa" :box nil)
+(set-face-attribute 'howm-reminder-tomorrow-face nil :foreground nil :background "#2d4900" :box nil)
+(define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
+(define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
 
 ;; face
 (custom-set-faces
@@ -547,6 +576,7 @@
 (el-get-bundle gregsexton/ob-ipython)
 (require 'ob-ipython)
 (require 'ob-python)
+(setq org-src-preserve-indentation t)
 
 ;; restart-eamcs
 (el-get-bundle restart-emacs)
