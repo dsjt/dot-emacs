@@ -284,18 +284,12 @@
 ;; smartparen
 (el-get-bundle 'smartparens)
 (smartparens-global-mode 1)
-;; (smartparens-global-strict-mode 1)
+(smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
-(setq sp-highlight-wrap-overlay nil)
+(aiueom kaki)
+(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 (sp-use-paredit-bindings)               ;(sp-use-smartparens-bindings)
 ;; (electric-pair-mode nil)
-;; paredit 保留中
-;; (el-get-bundle 'paredit)
-;; (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-;; (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-;; (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-;; (add-hook 'ielem-mode-hook 'enable-paredit-mode)
-;; (add-hook 'scheme-mode-hook 'enable-paredit-mode)
 
 ;; expand
 (global-set-key (kbd "C-;") 'hippie-expand)
