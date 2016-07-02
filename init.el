@@ -577,12 +577,18 @@
 
 ;; jword
 (el-get-bundle 'jaword)
+(jaword-mode)
 
 ;; c言語
 (setq c-hungry-delete-key nil)
 (add-hook 'c++-mode-hook 'my/electric-indent-mode-on)
 (add-hook 'c-mode-hook 'my/electric-indent-mode-on)
-;; (electric-indent-mode -1
+;;;###autoload 
+(defun my/astyle ()
+  "Implement astyle to c-code when saving it."
+  (interactive)
+  (call-process "astyle" nil nil "--style=kr" "-s4" "-Y" "-M80" "-p" "-U" "-j" "-k3" "-c" (buffer-file-name))
+  (revert-buffer nil t))
 
 ;;;for next-line
 ;;;###autoload
