@@ -10,8 +10,124 @@
 (require 'server)
 (server-start)
 
+;; noneed key-binding
+(global-unset-key (kbd "C-l"))        ;prefix key
+(global-unset-key (kbd "C-x l"))        ;prefix key
+(global-unset-key (kbd "C-x C-z"))
+(global-unset-key (kbd "C-\\"))
+(global-unset-key (kbd "C-x C-c"))
+(global-unset-key (kbd "C-x C-n"))
+(global-unset-key (kbd "C-x m"))
+(global-unset-key (kbd "<f1> h"))
+(global-unset-key (kbd "<f10>"))
+(global-unset-key (kbd "C-q"))
+
+;; new key-binding
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "C-l c") 'compile)
+(global-set-key (kbd "C-,") 'other-window-or-split)
+(global-set-key (kbd "C-x C-\\") 'indent-region)
+(global-set-key (kbd "C-x C-;") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-:") 'recenter-top-bottom)
+(global-set-key (kbd "C-x C-l") 'load-file)
+(global-set-key (kbd "C-l C-r") 'revert-buffer)
+(global-set-key (kbd "C-q M-i") 'quoted-insert)
+(global-set-key (kbd "C-x C-r") 'eval-region)
+
 ;; basic configuration
-(load-file "~/.emacs.d/config/common.el")
+(setq inhibit-startup-screen t)
+(show-paren-mode 1)
+(setq show-paren-style 'parenthesis)
+(setq frame-title-format
+      (format "%%f - Emacs@%s" (system-name)))
+(defface hlline-face
+  '((((class color)
+      (background dark))
+     (:background "gray0"))
+    (((class color)
+      (background light))
+     (:background "SeaGreen"))
+    (t
+     ()))
+  "used fave l-line.")
+(setq hl-line-face 'hlline-face)
+(global-hl-line-mode 1)
+(setq gc-cons-threshold (* 10 gc-cons-threshold))
+(setq-default tab-width 4 indent-tabs-mode nil) ;;tabを半角スペース2個にする。
+(defalias 'yes-or-no-p 'y-or-n-p)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(column-number-mode 1)
+(setq-default fill-column 80) ;;auto-fill
+(transient-mark-mode 1)
+(setq mark-ring-max 64
+      kill-whole-line t
+      visible-bell nil)
+(ffap-bindings)
+(put 'narrow-to-region 'disabled nil)
+(global-visual-line-mode 1)
+(setq-default line-move-visual nil)
+(set-default 'cursor-type 'bar)
+(add-hook 'emacs-lisp-mode 'electric-indent-mode)
+;;kill-buffers
+;;;###autoload
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (loop for buf in (buffer-list)
+        unless (or 
+                (get-buffer-window buf)
+                (string= (substring (buffer-name buf) 0 1) " ")
+                (get-buffer-process buf)
+                (member (buffer-name buf) ;; 消さないバッファ名を指定
+                        '("*Messages*" "*Compile-Log*" "*Help*"
+                          "*scratch*" "*init log*")))
+        do (kill-buffer buf)))
+(global-set-key (kbd "C-x C-c C-c") 'kill-other-buffers)
+;;;###autoload
+(defun switch-scratch-buffer ()
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (delete-other-windows))
+(global-set-key (kbd "C-l <SPC>") 'switch-scratch-buffer)
+(global-set-key (kbd "C-l C-<SPC>") 'switch-scratch-buffer)
+;; one-line-comment
+;;;###autoload
+(defun one-line-comment ()
+  (interactive)
+  (move-beginning-of-line 1)
+  (let ((b (point)))
+    (move-end-of-line 1)
+    (let ((e (point)))
+      (comment-or-uncomment-region b e))))
+(global-set-key (kbd "C-M-;") 'one-line-comment)
+;;;###autoload
+(defun duplicate-line ()
+  (interactive)
+  (save-excursion
+    (let ((cl (thing-at-point 'line)))
+      (forward-line 0)
+      (insert cl))))
+(global-set-key (kbd "C-S-y") 'duplicate-line)
+;;;###autoload
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+(global-set-key (kbd "C-c e") 'eval-and-replace)
+(defalias 'exit 'save-buffers-kill-emacs)
+;;;###autoload
+(defun other-window-or-split ()
+  (interactive)
+  (when (one-window-p)
+    (split-window-horizontally))
+  (other-window 1))
 
 ;; helm
 (el-get-bundle 'helm)
@@ -182,7 +298,7 @@
 ;; (add-hook 'scheme-mode-hook 'enable-paredit-mode)
 
 ;; expand
-(require 'hippie-exp)
+;; (require 'hippie-exp)
 ;; (eval-after-load "hippie-exp"
 ;;   '(setq hippie-expand-try-functions-list
 ;;          '(try-expand-all-abbrevs
