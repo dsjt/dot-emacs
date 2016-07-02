@@ -576,6 +576,7 @@
                        ("}" . (enlarge-window-horizontally 2))))
 
 ;; jword
+(el-get-bundle 'tinysegmenter)
 (el-get-bundle 'jaword)
 (jaword-mode)
 
