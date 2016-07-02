@@ -1,3 +1,4 @@
+;; el-get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -10,7 +11,7 @@
 (require 'server)
 (server-start)
 
-;; noneed key-binding
+;; needless key-bindings
 (global-unset-key (kbd "C-l"))        ;prefix key
 (global-unset-key (kbd "C-x l"))        ;prefix key
 (global-unset-key (kbd "C-x C-z"))
@@ -22,7 +23,7 @@
 (global-unset-key (kbd "<f10>"))
 (global-unset-key (kbd "C-q"))
 
-;; new key-binding
+;; a part of new key-bindings
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "C-l c") 'compile)
 (global-set-key (kbd "C-,") 'other-window-or-split)
@@ -70,7 +71,6 @@
 (setq-default line-move-visual nil)
 (set-default 'cursor-type 'bar)
 (add-hook 'emacs-lisp-mode 'electric-indent-mode)
-;;kill-buffers
 ;;;###autoload
 (defun kill-other-buffers ()
   "Kill all other buffers."
@@ -129,6 +129,9 @@
     (split-window-horizontally))
   (other-window 1))
 
+;; org-mode をこの位置でロードしておくことで競合の発生を避ける
+(el-get-bundle 'org)
+
 ;; helm
 (el-get-bundle 'helm)
 (helm-mode 1)
@@ -157,8 +160,8 @@
 
 ;; recentf
 (require 'recentf)
-(setq recentf-auto-cleanup 'never)
-(setq recentf-max-saved-items 10000)
+(setq recentf-auto-cleanup 'never
+      recentf-max-saved-items 10000)
 (el-get-bundle 'recentf-ext)
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-z") 'helm-recentf)
@@ -183,8 +186,8 @@
 
 ;; uniquify
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-(setq uniquify-ignore-buffers-re "*[^*]+*")
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets
+      uniquify-ignore-buffers-re "*[^*]+*")
 
 ;; anzu
 (el-get-bundle 'anzu)
@@ -210,9 +213,9 @@
 
 ;; undo-tree
 (el-get-bundle 'undo-tree)
-(setq undo-no-redo nil)
-(setq undo-limit 600000)
-(setq undo-strong-limit 900000)
+(setq undo-no-redo nil
+      undo-limit 600000
+      undo-strong-limit 900000)
 (global-undo-tree-mode 1)
 (global-set-key (kbd "C-M-/") 'undo-tree-redo)
 
@@ -224,9 +227,9 @@
 (el-get-bundle 'direx)
 (global-set-key (kbd "C-x d") 'direx:jump-to-directory)
 (el-get-bundle 'dired+)
-(setq dired-dwim-target t)
+(setq dired-dwim-target t
+      delete-by-moving-to-trash t)
 (global-dired-hide-details-mode -1)
-(setq delete-by-moving-to-trash t)
 ;; diredで開いたpdfをrecentfに追加するための設定．
 (defadvice dired-find-file (before add-recentf)
   (let ((file (dired-filename-at-point)))
@@ -280,6 +283,7 @@
 
 ;; org-mode
 (el-get-bundle 'org)
+; (load  "~/.emacs.d/elpa/org-20160627/org-compat.el")
 (setq org-startup-folded nil)
 (setq org-hide-leading-stars t)
 (setq org-log-done 'time)
@@ -291,8 +295,7 @@
                          ("u" . (outline-up-heading 1))
                          ("f" . (org-forward-heading-same-level 1))
                          ("b" . (org-backward-heading-same-level 1))
-                         ("<tab>" . (org-cycle))
-                         ))
+                         ("<tab>" . (org-cycle))))
 (global-set-key (kbd "C-c l") 'org-store-link)
 (define-key org-mode-map (kbd "C-,") 'other-window-or-split)
 (global-set-key "\C-cc" 'org-capture)
@@ -402,14 +405,6 @@
 ;; (setq org-html-postamble t)
 
 ;; babel
-;; ob-python
-(el-get-bundle 'f)
-(el-get-bundle 'gregsexton/ob-ipython)
-(setq org-src-preserve-indentation t)
-
-;; ob-http
-(el-get-bundle 'ob-http)
-(setq org-confirm-babel-evaluate nil)
 (setq org-babel-load-languages
       '((R . t)
         (C . t)
@@ -417,7 +412,23 @@
         (sh . t)
         (gnuplot . t)
         (http . t)
-        (ruby . t)))
+        (ruby . t)
+        (python . t)
+        (ipython . t)))
+;; ob-python
+(el-get-bundle 'f)
+;; (el-get-bundle! 'gregsexton/ob-ipython)
+;; ipython3 のための 再定義
+;; (defun ob-ipython--kernel-repl-cmd (name)
+;;   (list "ipython3" "console" "--existing" (format "emacs-%s.json" name)))
+(autoload 'org-babel-execute:python "ob-python.el")
+(setq org-babel-python-command "python3")
+(setq org-src-preserve-indentation t)
+
+;; ob-http
+(el-get-bundle 'ob-http)
+(setq org-confirm-babel-evaluate nil)
+
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 ;;;###autoload
 (defun my/toggle-yatex-mode-temporarily ()
@@ -443,8 +454,9 @@
   (interactive)
   (let ((pdf-file (concat (car (split-string (buffer-file-name) "\\.")) ".pdf"))
         (viewer pdf-viewer))
-    (when (file-exists-p pdf-file)
-      (start-process "*view-pdf*" nil viewer pdf-file))))
+    (if (file-exists-p pdf-file)
+        (start-process "*view-pdf*" nil viewer pdf-file)
+      (error "A pdf file doesn't exist."))))
 (define-key org-mode-map (kbd "C-\\ p") 'view-pdf)
 
 ;; smartparen
@@ -453,7 +465,9 @@
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-(sp-use-paredit-bindings)               ;(sp-use-smartparens-bindings)
+(sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
+(sp-use-paredit-bindings)
+;;(sp-use-smartparens-bindings)
 ;; (electric-pair-mode nil)
 
 ;; expand
@@ -517,8 +531,8 @@
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
- '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))) t)
- '(org-done ((t (:strike-through "black" :weight bold))))
+ '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))))
+ '(org-done ((t (:foreground "magenta" :strike-through "black" :weight bold))))
  '(org-todo ((t (:foreground "dark green" :weight bold)))))
 (set-face-attribute 'default nil :family "IPAGothic" :height 120) ; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
 
@@ -753,3 +767,9 @@
 (el-get-bundle 'restart-emacs)
 
 (load-file "~/.emacs.d/private.el")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
