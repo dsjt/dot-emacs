@@ -36,19 +36,19 @@
 (setq helm-ff-skip-boring-files t)
 
 ;; helm-ag
-(el-get-bundle helm-ag)
+(el-get-bundle 'helm-ag)
 (global-set-key (kbd "C-l g") 'helm-ag)
 
 ;; recentf
 (require 'recentf)
 (setq recentf-auto-cleanup 'never)
 (setq recentf-max-saved-items 10000)
-(el-get-bundle recentf-ext)
+(el-get-bundle 'recentf-ext)
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-z") 'helm-recentf)
 
 ;; sequential-command
-(el-get-bundle elpa:sequential-command)
+(el-get-bundle 'elpa:sequential-command)
 (sequential-command-setup-keys)
 
 ;;color
@@ -58,17 +58,10 @@
 (set-cursor-color "white")
 
 ;; smartrep  ;; 使っているので注意
-(el-get-bundle! smartrep)
-
-;; ace-jump-mode
-(el-get-bundle ace-jump-mode)
-(global-set-key (kbd "C-M-j") 'ace-jump-mode)
-(smartrep-define-key
-    global-map "C-l" '(("[" . (backward-paragraph))
-                       ("]" . (forward-paragraph))))
+(el-get-bundle! 'smartrep)
 
 ;; expand-region
-(el-get-bundle expand-region)
+(el-get-bundle 'expand-region)
 (global-set-key (kbd "C-@") 'er/expand-region)
 (global-set-key (kbd "C-M-@") 'er/contract-region)
 
@@ -78,7 +71,7 @@
 (setq uniquify-ignore-buffers-re "*[^*]+*")
 
 ;; anzu
-(el-get-bundle anzu)
+(el-get-bundle 'anzu)
 (global-anzu-mode 1)
 ;; isearchの数を出してくれるだけで十分
 ;; (global-set-key (kbd "C-x q") 'anzu-query-replace) 
@@ -86,21 +79,21 @@
 ;; (global-set-key (kbd "C-x M-q") 'anzu-query-replace-at-cursor)
 
 ;; visual-regexp
-(el-get-bundle visual-regexp)
+(el-get-bundle 'visual-regexp)
 (setq vr/default-replace-preview t)
 (global-unset-key (kbd "C-x q"))
 (global-set-key (kbd "C-x q") 'vr/query-replace)
 (global-set-key (kbd "C-S-c m") 'vr/mc-mark)
 
 ;; point-undo
-(el-get-bundle! point-undo)
+(el-get-bundle! 'point-undo)
 (global-set-key (kbd "C-.") 'point-undo)
 (global-set-key (kbd "C-M-.") 'point-redo)
 (global-set-key (kbd "<f7>") 'point-undo)
 (global-set-key (kbd "S-<f7>") 'point-redo)
 
 ;; undo-tree
-(el-get-bundle undo-tree)
+(el-get-bundle 'undo-tree)
 (setq undo-no-redo nil)
 (setq undo-limit 600000)
 (setq undo-strong-limit 900000)
@@ -108,13 +101,13 @@
 (global-set-key (kbd "C-M-/") 'undo-tree-redo)
 
 ;; helm-swoop
-(el-get-bundle helm-swoop)
+(el-get-bundle 'helm-swoop)
 (global-set-key (kbd "M-i") 'helm-swoop)
 
 ;; dired
-(el-get-bundle direx)
+(el-get-bundle 'direx)
 (global-set-key (kbd "C-x d") 'direx:jump-to-directory)
-(el-get-bundle dired+)
+(el-get-bundle 'dired+)
 (setq dired-dwim-target t)
 (global-dired-hide-details-mode -1)
 (setq delete-by-moving-to-trash t)
@@ -126,7 +119,7 @@
 (ad-activate 'dired-find-file)
 
 ;; dired-hacks
-(el-get-bundle dired-hacks)
+(el-get-bundle 'dired-hacks)
 (require 'dired-filter)
 (setq dired-filter-group-saved-groups
       '(("default"
@@ -151,16 +144,16 @@
 ;; ("bmp" . "eog")
 
 ;; junk-file
-(el-get-bundle open-junk-file)
+(el-get-bundle 'open-junk-file)
 (global-set-key (kbd "C-x f") 'open-junk-file)
 
 ;; ess
-(el-get-bundle elpa:ess)
+(el-get-bundle 'elpa:ess)
 (add-to-list 'load-path "~/.emacs.d/el-get/ess/lisp")
 (require 'ess-site)
 
 ;; yatex
-(el-get-bundle elpa:yatex)
+(el-get-bundle 'elpa:yatex)
 (setq YaTeX-kanji-code nil)
 (setq YaTeX-coding-system nil)
 (add-to-list' auto-mode-alist
@@ -170,17 +163,10 @@
 (setq YaTeX-latex-message-code 'utf-8)
 
 ;; org
-(setq org-agenda-files
-      '("/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/gcal.org"
-        "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/GTD/newgtd.org_archive"
-        "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/remember.org"
-        "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/GTD/someday.org_archive"
-        "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/GTD/newgtd.org"))
-(add-to-list 'org-agenda-files "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/gcal.org")
 (load-file "~/.emacs.d/config/my-org.el")
 
 ;; smartparen
-(el-get-bundle smartparens)
+(el-get-bundle 'smartparens)
 (smartparens-global-mode 1)
 ;; (smartparens-global-strict-mode 1)
 (setq sp-highlight-pair-overlay nil)
@@ -188,7 +174,7 @@
 (sp-use-paredit-bindings)               ;(sp-use-smartparens-bindings)
 ;; (electric-pair-mode nil)
 ;; paredit 保留中
-;; (el-get-bundle paredit)
+;; (el-get-bundle 'paredit)
 ;; (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 ;; (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
 ;; (add-hook 'lisp-mode-hook 'enable-paredit-mode)
@@ -210,7 +196,7 @@
 (global-set-key (kbd "C-;") 'hippie-expand)
 
 ;; scroll 
-(el-get-bundle yascroll)
+(el-get-bundle 'yascroll)
 (global-yascroll-bar-mode 1)
 (setq scroll-conservatively 20)
 (setq scroll-margin 5)
@@ -218,14 +204,12 @@
 (setq next-screen-context-lines 20)
 
 ;; howm
-(add-to-list 'load-path "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/.emacs.d/site-lisp/")
-(setq howm-directory "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/howm/")
 (global-unset-key (kbd "C-q"))
 (setq howm-prefix "\C-q"
       howm-view-title-header "*"
       howm-menu-lang 'ja
       howm-keyword-case-fold-search t)
-(el-get-bundle! howm) ; 上との順序，重要なので変更しない
+(el-get-bundle! 'howm) ; '上との順序，重要なので変更しない
 (setq howm-list-recent-title t                       ;; 「最近のメモ」一覧時にタイトル表示
       howm-list-all-title t                          ;; 全メモ一覧時にタイトル表示
       howm-menu-expiry-hours 2                       ;; メニューを 2 時間キャッシュ
@@ -263,16 +247,10 @@
  '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))) t)
  '(org-done ((t (:strike-through "black" :weight bold))))
  '(org-todo ((t (:foreground "dark green" :weight bold)))))
-(set-face-attribute 'default nil :family "IPAGothic" :height 120)
-
-;; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
-;; (set-face-attribute 'default nil :family "Ubuntu Mono" :height 120)
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'japanese-jisx0208
-;;                   (font-spec :family "Ubuntu Mono" :size 16))
+(set-face-attribute 'default nil :family "IPAGothic" :height 120) ; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
 
 ;; yasnippet
-(el-get-bundle yasnippet)
+(el-get-bundle 'yasnippet)
 (yas-global-mode 1)
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i i") 'yas-insert-snippet)
@@ -280,11 +258,11 @@
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
 
 ;; popwin
-(el-get-bundle! popwin)
+(el-get-bundle! 'popwin)
 (popwin-mode 1)
 
 ;; google-translate
-(el-get-bundle google-translate)
+(el-get-bundle 'google-translate)
 (defun google-en-to-ja ()
   (interactive)
   (google-translate-translate "en" "ja"
@@ -295,77 +273,9 @@
                                     (error "No word at point.")))))
 (global-set-key (kbd "C-l e") 'google-en-to-ja)
 
-;; twitter
-;; (el-get-bundle twittering-mode)
-(add-to-list 'load-path "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/programming/twitter/twittering-mode/twittering-mode/")
-(require 'twittering-mode "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/programming/twitter/twittering-mode/twittering-mode/twittering-mode.el")
-(global-set-key (kbd "C-\\ t t") 'twit)
-(global-set-key (kbd "C-\\ t u") 'twittering-update-status-from-pop-up-buffer)
-(global-set-key (kbd "C-\\ u") 'twittering-update-status-from-pop-up-buffer)
-(setq twittering-use-master-password t)
-(setq twittering-private-info-file "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/.emacs.d/twittering-mode.gpg")
-(smartrep-define-key
-    global-map "C-\\ t" '(("P" . (twittering-switch-to-previous-account))
-                          ("N" . (twittering-switch-to-next-account))))
-;;;###autoload
-(defun prepare-twitter ()
-  (interactive)
-  (twittering-ensure-preparation-for-api-invocation)
-  (message "OK"))
-(global-set-key (kbd "C-\\ t p") 'prepare-twitter)
-;;;###autoload
-(defun twittering-mode-hook-func ()
-  (set-face-bold-p 'twittering-username-face t)
-  (define-key twittering-mode-map (kbd "F") 'twittering-favorite-no-p))
-(add-hook 'twittering-mode-hook 'twittering-mode-hook-func)
-;;;###autoload
-(defun twittering-favorite-no-p(&optional remove)
-  (interactive "P")
-  (let ((id (get-text-property (point) 'id))
-        (text (copy-sequence (get-text-property (point) 'text)))
-        (width (max 40 ;; XXX
-                    (- (frame-width)
-                       1 ;; margin for wide characters
-                       15 ;; == (length (concat "Unfavorite \"" "\"? "))
-                       9) ;; == (length "(y or n) ")
-                    ))
-        (method (if remove 'destroy-favorites 'create-favorites)))
-    (set-text-properties 0 (length text) nil text)
-    (if id
-        (let ((mes (format "%s \"%s\" "
-                           (if remove "Unfavorite" "Favorite")
-                           (if (< width (string-width text))
-                               (concat
-                                (truncate-string-to-width text (- width 3))
-                                "...")
-                             text))))
-          (message mes)
-          (twittering-call-api method `((id . ,id))))
-      (message "No status selected"))))
-(setq twittering-status-format "%i %S (%s) %r %RT{Retweeted by %s} %@\n %t \n  ---------------------------------")
-(setq twittering-icon-storage-file "~/.emacs.d/.twittering-mode-icons.gz")
-(setq twittering-use-icon-storage t)
-(setq twittering-icon-storage-limit 500)
-;;;###autoload
-(defun tweet-current-line()
-  (interactive)
-  (tweet-region (line-beginning-position) (line-end-position)))
-(global-set-key (kbd "C-\\ t l") 'tweet-current-line)
-;;;###autoload
-(defun tweet-region(beg end)
-  (interactive "r")
-  (let ((tw-string (buffer-substring-no-properties beg end)))
-    (if (y-or-n-p (format "post \"%s\"?" tw-string))
-        (progn (twittering-update-status-from-pop-up-buffer tw-string)
-               (twittering-edit-post-status)
-               (unless current-prefix-arg
-                 (goto-char end)
-                 (insert (format "tweeted at %s"
-                                 (format-time-string "%H:%M:%S"))))))))
-(global-set-key (kbd "C-\\ t r") 'tweet-region)
 
 ;; rotate
-(el-get-bundle rotate)
+(el-get-bundle 'rotate)
 (smartrep-define-key
     global-map "C-l" '(("w" . (rotate-window))
                        ("l" . (rotate-layout))))
@@ -374,7 +284,7 @@
                        ("}" . (enlarge-window-horizontally 2))))
 
 ;; jword
-(el-get-bundle jaword)
+(el-get-bundle 'jaword)
 
 ;; c言語
 (setq c-hungry-delete-key nil)
@@ -448,7 +358,7 @@
                        ("<right>" . (winner-redo))))
 
 ;; multiple-cursors
-(el-get-bundle multiple-cursors)
+(el-get-bundle 'multiple-cursors)
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -467,7 +377,7 @@
 (mouse-avoidance-mode 'exile)
 
 ;; calfw
-(el-get-bundle calfw)
+(el-get-bundle 'calfw)
 (require 'calfw-org)
 (global-set-key (kbd "C-c M-c") 'cfw:open-org-calendar)
 
@@ -492,7 +402,7 @@
 (setq save-place-file "~/.emacs.d/saved-places")
 
 ;; openwith
-(el-get-bundle openwith)
+(el-get-bundle 'openwith)
 (setq openwith-associations
       '(("\\.pdf\\'" "evince" (file))
         ;; ("\\.\\(?:mp3\\|wav\\|ogg\\)\\'" "mplayer" (file))
@@ -501,7 +411,7 @@
         ))
 
 ;; number
-(el-get-bundle number)
+(el-get-bundle 'number)
 (global-set-key (kbd "C-c C-+") 'number/add)
 (global-set-key (kbd "C-c C--") 'number/sub)
 (global-set-key (kbd "C-c C-*") 'number/multiply)
@@ -539,29 +449,24 @@
 ;; scheme
 (setq scheme-program-name "jakld")
 
-;; org-gcal
-(el-get-bundle org-gcal)
-(setq 
- org-gcal-client-id "614835768354-m78eu8u53kgq4fe8i97dfnapuhqabrar.apps.googleusercontent.com"
- org-gcal-client-secret "rIaWQz9Gebw0QClbckvf3fAt"
- ;;カレンダーIDをキー、スケジュールを取りこむOrgファイルをvalueとするalist
- ;;複数登録可
- org-gcal-file-alist '(("toot.daiylfalaiydt@gmail.com" .  "/media/ishida/01D02FECF109C100/Users/tatsuhiro/Documents/org/gcal.org")))
-
-;; avy ;; ace-jump-mode の後継
-(el-get-bundle avy)
+;; avy  ,ace-jump-mode の後継
+(el-get-bundle 'avy)
 (global-set-key (kbd "C-M-j") 'avy-goto-char)
+(el-get-bundle 'ace-jump-mode)
 (load-file "~/.emacs.d/site-lisp/ace-pinyin-myconf.el")
+(smartrep-define-key
+    global-map "C-l" '(("[" . (backward-paragraph))
+                       ("]" . (forward-paragraph))))
 
 ;; auto-complete
-(el-get-bundle auto-complete)
+(el-get-bundle 'auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
 (global-auto-complete-mode 1)
 (add-to-list 'ac-modes 'YaTeX-mode)
 
 ;; Standard Jedi.el setting
-(el-get-bundle jedi)
+(el-get-bundle 'jedi)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 (setq jedi:complete-on-dot t)
@@ -572,12 +477,13 @@
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
 
 ;; org-babel python
-(el-get-bundle f)
-(el-get-bundle gregsexton/ob-ipython)
+(el-get-bundle 'f)
+(el-get-bundle 'gregsexton/ob-ipython)
 (require 'ob-ipython)
 (require 'ob-python)
 (setq org-src-preserve-indentation t)
 
 ;; restart-eamcs
-(el-get-bundle restart-emacs)
+(el-get-bundle 'restart-emacs)
 
+(load-file "~/.emacs.d/private.el")
