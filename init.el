@@ -685,6 +685,7 @@
 (el-get-bundle 'magit)
 (require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
+(setq magit-revert-buffers t)
 
 ;;;###autoload
 (defun my/copy-current-file-name ()
@@ -720,7 +721,7 @@
 (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
-(add-to-list 'backup-directory-alist
+(setq backup-directory-alist
              `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
 
 ;;; python
@@ -733,14 +734,12 @@
          (clend (line-end-position)))
     (python-shell-send-region clbeg clend)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq python-shell-interpreter "python3")
 (setq python-shell-interpreter-args "-i")
 (setq indent-tabs-mode nil)
 (setq indent-level 4)
 (setq python-indent 4)
 (setq tab-width 4)
-
 
 ;; jedi
 (el-get-bundle 'jedi)
@@ -787,9 +786,3 @@
 (el-get-bundle 'restart-emacs)
 
 (load-file "~/.emacs.d/private.el")
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
