@@ -278,15 +278,180 @@
 (setq YaTeX-fill-column 80)
 (setq YaTeX-latex-message-code 'utf-8)
 
-;; org
-(load-file "~/.emacs.d/config/my-org.el")
+;; org-mode
+(el-get-bundle 'org)
+(setq org-startup-folded nil)
+(setq org-hide-leading-stars t)
+(setq org-log-done 'time)
+(setq org-use-fast-todo-selection nil)
+(setq org-use-speed-commands t)
+(smartrep-define-key
+    org-mode-map "C-c" '(("p" . (outline-previous-visible-heading 1))
+                         ("n" . (outline-next-visible-heading 1))
+                         ("u" . (outline-up-heading 1))
+                         ("f" . (org-forward-heading-same-level 1))
+                         ("b" . (org-backward-heading-same-level 1))
+                         ("<tab>" . (org-cycle))
+                         ))
+(global-set-key (kbd "C-c l") 'org-store-link)
+(define-key org-mode-map (kbd "C-,") 'other-window-or-split)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
+(add-hook 'org-mode-hook 'turn-on-font-lock)
+(add-hook 'org-mode-hook 'org-indent-mode)
+(add-hook 'org-mode-hook 'org-display-inline-images)
+
+;; org-archive
+(setq org-archive-default-command 'org-archive-to-archive-sibling)
+(define-key org-mode-map (kbd "C-S-n") 'org-metaright)
+(define-key org-mode-map (kbd "C-S-p") 'org-metaleft)
+
+;; org-agenda
+;; http://hpcgi1.nifty.com/spen/index.cgi?OrgMode%2fOrg%2dmode%a4%c7GTD%bc%c2%c1%a9%a1%ca%cb%dd%cc%f5%a1%cb
+(setq org-agenda-custom-commands
+      '(("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
+        ("H" "Office and Home Lists"
+         ((agenda "" ((org-agenda-ndays 1)))
+          (tags "Buckets")
+          (todo "TODO" ((org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'all)))))
+        ("D" "Daily Action List"
+         ((agenda "" ((org-agenda-ndays 1)
+                      ;; (org-agenda-sorting-strategy
+                      ;;  (quote ((agenda time-up priority-down tag-up))))
+                      (org-deadline-warning-days 0)
+                      (org-agenda-log-mode 1)))))
+        ("W" "Weekly Review"
+         ((agenda "" ((org-agenda-ndays 1)
+                      (org-deadline-warning-days 100)
+                      (org-agenda-use-time-grid nil)
+                      (org-agenda-todo-list-sublevels nil)))
+          (todo "TODO" ((org-agenda-todo-list-sublevels t)))))
+        ("o" "Originally Daily List"
+         ((agenda "" ((org-agenda-ndays 3)
+                      (org-deadline-warning-days 7)
+                      (org-agenda-log-mode-items '(closed state))
+                      (org-agenda-show-log t)))
+          (tags "Buckets")))
+        ("O" "Originally Daily List"
+         ((agenda "" ((org-agenda-ndays 3)
+                      (org-deadline-warning-days 7)
+                      (org-agenda-log-mode-items '(state))
+                      (org-agenda-show-log t)))
+          (tags "Buckets")))))
+(add-hook 'org-timer-set-hook 'org-clock-in)
+(add-hook 'org-timer-done-hook 'org-clock-out)
+(add-hook 'org-timer-stop-hook 'org-clock-out)
+
+;; calender
+(require 'solar)
+(setq holiday-general-holidays nil
+      holiday-local-holidays t
+      holiday-solar-holidays nil
+      holiday-bahai-holidays nil
+      holiday-christian-holidays nil
+      holiday-hebrew-holidays nil
+      holiday-islamic-holidays nil
+      holiday-oriental-holidays nil
+      holiday-other-holidays nil
+      mark-holidays-in-calendar t)
+(setq holiday-local-holidays
+      '((holiday-fixed 1 1 "元日")
+        (holiday-float 1 1 2 "成人の日")
+        (holiday-fixed 2 11 "建国記念の日")
+        (holiday-sexp '(map 'list 'truncate (solar-equinoxes/solstices 0 year)) "春分の日")
+        (holiday-fixed 4 29 "昭和の日")
+        (holiday-fixed 5 3 "憲法記念日")
+        (holiday-fixed 5 4 "みどりの日")
+        (holiday-fixed 5 5 "こどもの日")
+        (holiday-float 7 1 3 "海の日")
+        (holiday-float 7 1 3 "敬老の日")
+        (holiday-sexp '(map 'list 'truncate (solar-equinoxes/solstices 2 year)) "秋分の日")
+        (holiday-float 10 1 2 "体育の日")
+        (holiday-fixed 11 3 "文化の日")
+        (holiday-fixed 11 23 "勤労感謝の日")
+        (holiday-fixed 12 23 "天皇誕生日")))
+
+;; column
+(setq org-columns-default-format "%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %14Effort(Time){:} %6CLOCKSUM{Total}")
+
+;; export
+;; org->latex
+;; (setq org-latex-default-class "jsarticle")
+;; (defvar org-latex-classes nil)
+;; (setq org-latex-default-packages-alist
+;;       '(("dvipdfmx" "graphicx" t)
+;;         ("" "amsmath" t)
+;;         ("" "amssymb" t)
+;;         ("" "amsfonts" t)
+;;         ))
+;; (add-to-list 'org-latex-classes 
+;;       '("jsarticle" "\\documentclass[a4paper,12pt,titlepage]{jsarticle}"))
+
+;; org->html
+;; (setq org-html-with-latex 'mathjax)
+;; (setq org-html-with-latex 'dvipng)
+;; (setq org-html-mathjax-options '((path "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML") (scale "100") (align "center") (indent "2em") (mathml nil)))
+;; (setq org-export-default-language "ja")
+;; (setq org-html-postamble-format
+;;       '(("ja" "<!-- <p class=\"author\">Author: %a (%e)</p> -->
+;; <p class=\"date\">Date: %T</p>
+;; <p class=\"creator\">%c</p>
+;; <p class=\"validation\">%v</p>")))
+;; (setq org-html-postamble t)
+
+;; babel
+;; ob-python
+(el-get-bundle 'f)
+(el-get-bundle 'gregsexton/ob-ipython)
+(setq org-src-preserve-indentation t)
+
+;; ob-http
+(el-get-bundle 'ob-http)
+(setq org-confirm-babel-evaluate nil)
+(setq org-babel-load-languages
+      '((R . t)
+        (C . t)
+        (emacs-lisp . t)
+        (sh . t)
+        (gnuplot . t)
+        (http . t)
+        (ruby . t)))
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+;;;###autoload
+(defun my/toggle-yatex-mode-temporarily ()
+  (interactive)
+  (cond ((not (eq major-mode 'yatex-mode))
+         (yatex-mode))
+        (t (normal-mode))))
+(global-set-key (kbd "C-c Y") 'my/toggle-yatex-mode-temporarily)
+
+(setq org-latex-with-hyperref nil)
+(setq org-latex-pdf-process '("platex %f" "dvipdfmx %b.dvi"))
+
+;; org-external
+(setq org-file-apps '(("\\.rd\\'" . emacs)
+                      ("\\.pdf\\'" . evince)
+                      (auto-mode . emacs)
+                      ("\\.mm\\'" . default)
+                      ("\\.x?html?\\'" . default)))
+(setq org-link-file-path-type 'relative)
+(defvar pdf-viewer "evince")
+;;;###autoload
+(defun view-pdf()
+  (interactive)
+  (let ((pdf-file (concat (car (split-string (buffer-file-name) "\\.")) ".pdf"))
+        (viewer pdf-viewer))
+    (when (file-exists-p pdf-file)
+      (start-process "*view-pdf*" nil viewer pdf-file))))
+(define-key org-mode-map (kbd "C-\\ p") 'view-pdf)
 
 ;; smartparen
 (el-get-bundle 'smartparens)
 (smartparens-global-mode 1)
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
-(aiueom kaki)
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 (sp-use-paredit-bindings)               ;(sp-use-smartparens-bindings)
 ;; (electric-pair-mode nil)
@@ -573,7 +738,7 @@
 (global-auto-complete-mode 1)
 (add-to-list 'ac-modes 'YaTeX-mode)
 
-;; Standard Jedi.el setting
+;; jedi
 (el-get-bundle 'jedi)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
@@ -583,13 +748,6 @@
 (require 'clang-format)
 (setq clang-format-executable "clang-format-3.5")
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
-
-;; org-babel python
-(el-get-bundle 'f)
-(el-get-bundle 'gregsexton/ob-ipython)
-(require 'ob-ipython)
-(require 'ob-python)
-(setq org-src-preserve-indentation t)
 
 ;; restart-eamcs
 (el-get-bundle 'restart-emacs)
