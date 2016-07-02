@@ -308,6 +308,7 @@
 
 ;; org-agenda
 ;; http://hpcgi1.nifty.com/spen/index.cgi?OrgMode%2fOrg%2dmode%a4%c7GTD%bc%c2%c1%a9%a1%ca%cb%dd%cc%f5%a1%cb
+;; yokuwakarann
 (setq org-agenda-custom-commands
       (("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
         ("d" "4 days agenda"
