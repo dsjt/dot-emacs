@@ -736,12 +736,21 @@
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq python-shell-interpreter "python3")
 (setq python-shell-interpreter-args "-i")
+(setq indent-tabs-mode nil)
+(setq indent-level 4)
+(setq python-indent 4)
+(setq tab-width 4)
+
 
 ;; jedi
 (el-get-bundle 'jedi)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 (setq jedi:complete-on-dot t)
+
+;; py-autopep8
+(el-get-bundle py-autopep8)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 
 ;; quickrun
 (el-get-bundle 'quickrun)
