@@ -632,6 +632,7 @@
 (global-set-key (kbd "C-\\ c") 'start-gnome-terminal)
 (global-set-key (kbd "C-\\ E") 'eshell)
 (global-set-key (kbd "C-\\ M-e") 'my/popup-eshell)
+;;;###autoload
 (defun my/popup-eshell (arg)
   (interactive "p")
   (let (eb)
@@ -641,6 +642,7 @@
 (global-set-key (kbd "C-\\ 9") 'popwin:stick-popup-window)
 
 ;; inhibit-splash-screen
+;;;###autoload
 (defun my/insert-emacs-init-time-in-scratch ()
   (interactive)
   (with-output-to-temp-buffer "*information*"
@@ -718,10 +720,8 @@
 (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
-(add-to-list 'backup-directory-alist '(("\\.*") . "~/.emacs.d/backup/"))
-(setq backup-directory-alist
-      (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
-            backup-directory-alist))
+(add-to-list 'backup-directory-alist
+             `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
 
 ;;; python
 (require 'python)
