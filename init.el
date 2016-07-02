@@ -173,6 +173,7 @@
 
 ;; sequential-command
 (el-get-bundle 'elpa:sequential-command)
+(require 'sequential-command-config)
 (sequential-command-setup-keys)
 
 ;;color
@@ -255,17 +256,6 @@
           (extension . "org"))
          ("Archives"
           (extension "zip" "rar" "gz" "bz2" "tar")))))
-;; (require 'dired-open)
-;; (setq dired-open-extensions
-;;       '(("pdf" . "evince")))
-;; ("wav" . "audacious")
-;; ("mp3" . "audacious")
-;; ("ogg" . "audacious")
-;; ("png" . "eog")
-;; ("jpg" . "eog")
-;; ("jpg-large" . "eog")
-;; ("gif" . "eog")
-;; ("bmp" . "eog")
 
 ;; junk-file
 (el-get-bundle 'open-junk-file)
@@ -485,7 +475,7 @@
         try-expand-dabbrev-from-kill
         try-complete-lisp-symbol-partially
         try-complete-lisp-symbol))
- 
+
 ;; scroll 
 (el-get-bundle 'yascroll)
 (global-yascroll-bar-mode 1)
@@ -540,12 +530,10 @@
  '(org-todo ((t (:foreground "dark green" :weight bold)))))
 (set-face-attribute 'default nil :family "IPAGothic" :height 120) ; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
 
-(message "age")
 ;; yasnippet
 (el-get-bundle 'yasnippet)
 (yas-global-mode 1)
 (global-unset-key (kbd "C-x i"))
-(global-set-key (kbd "C-x i i") 'yas-insert-snippet)
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
 
@@ -558,7 +546,7 @@
 (defun google-en-to-ja ()
   (interactive)
   (google-translate-translate "en" "ja"
-                              (if (use-region-pq)
+                              (if (use-region-p)
                                   (buffer-substring-no-properties (region-beginning)
                                                                   (region-end))
                                 (or (current-word t t)
@@ -575,13 +563,13 @@
     global-map "C-l" '(("{" . (shrink-window-horizontally 2))
                        ("}" . (enlarge-window-horizontally 2))))
 
-;; jword
+;; jaword
 (el-get-bundle 'tinysegmenter)
 (el-get-bundle 'jaword)
 (jaword-mode)
 
 ;; c言語
-(setq c-hungry-delete-key nil)
+(setq-default c-hungry-delete-key nil)
 (add-hook 'c++-mode-hook 'my/electric-indent-mode-on)
 (add-hook 'c-mode-hook 'my/electric-indent-mode-on)
 ;;;###autoload 
@@ -613,6 +601,8 @@
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 (add-hook 'python-mode-hook 'hs-minor-mode)
+(add-hook 'latex-mode-hook 'hs-minor-mode)
+(add-hook 'YaTeX-mode-hook 'hs-minor-mode)
 (define-key hs-minor-mode-map (kbd "C-^") 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-M-^") 'hs-hide-all)
 (define-key hs-minor-mode-map (kbd "C-M-~") 'hs-show-all)
@@ -674,7 +664,6 @@
 (global-set-key (kbd "C-S-c C-S-n") 'mc/skip-to-next-like-this)
 (global-set-key (kbd "C-S-c C-S-e") 'mc/mark-more-like-this-extended)
 
-(message "boo")
 ;; mouse
 (mouse-avoidance-mode 'exile)
 
@@ -685,7 +674,6 @@
 
 ;; magit
 (el-get-bundle 'magit)
-(require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 
 ;;;###autoload
@@ -722,7 +710,7 @@
 (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
-(add-to-list 'backup-directory-alist
+(setq backup-directory-alist
              `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
 
 ;;; python
@@ -742,7 +730,6 @@
 (setq indent-level 4)
 (setq python-indent 4)
 (setq tab-width 4)
-
 
 ;; jedi
 (el-get-bundle 'jedi)
@@ -789,9 +776,3 @@
 (el-get-bundle 'restart-emacs)
 
 (load-file "~/.emacs.d/private.el")
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
