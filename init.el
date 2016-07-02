@@ -418,8 +418,7 @@
         (gnuplot . t)
         (http . t)
         (ruby . t)
-        (python . t)
-        (ipython . t)))
+        (python . t)))
 ;; ob-python
 (el-get-bundle 'f)
 ;; (el-get-bundle! 'gregsexton/ob-ipython)
@@ -541,6 +540,7 @@
  '(org-todo ((t (:foreground "dark green" :weight bold)))))
 (set-face-attribute 'default nil :family "IPAGothic" :height 120) ; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
 
+(message "age")
 ;; yasnippet
 (el-get-bundle 'yasnippet)
 (yas-global-mode 1)
@@ -576,6 +576,7 @@
                        ("}" . (enlarge-window-horizontally 2))))
 
 ;; jword
+(el-get-bundle 'tinysegmenter)
 (el-get-bundle 'jaword)
 (jaword-mode)
 
@@ -673,6 +674,7 @@
 (global-set-key (kbd "C-S-c C-S-n") 'mc/skip-to-next-like-this)
 (global-set-key (kbd "C-S-c C-S-e") 'mc/mark-more-like-this-extended)
 
+(message "boo")
 ;; mouse
 (mouse-avoidance-mode 'exile)
 
