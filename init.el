@@ -37,8 +37,6 @@
 (global-set-key (kbd "C-:") 'recenter-top-bottom)
 (global-set-key (kbd "C-x C-l") 'load-file)
 (global-set-key (kbd "C-l C-r") 'revert-buffer)
-(global-set-key (kbd "C-q M-i") 'quoted-insert)
-(global-set-key (kbd "C-x C-r") 'eval-region)
 
 ;; basic configuration
 (setq inhibit-startup-screen t)
@@ -136,6 +134,9 @@
 
 ;; org-mode をこの位置でロードしておくことで競合の発生を避ける
 (el-get-bundle 'org)
+
+;; restart-eamcs
+(el-get-bundle 'restart-emacs)
 
 ;; helm
 (el-get-bundle 'helm)
@@ -512,8 +513,9 @@
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
  '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))))
- '(org-done ((t (:foreground "magenta" :strike-through "black" :weight bold))))
- '(org-todo ((t (:foreground "dark green" :weight bold)))))
+ '(org-agenda-done ((t (:foreground "dark gray"))))
+ '(org-done ((t (:foreground "black" :strike-through "black" :weight bold))))
+ '(org-todo ((t (:foreground "deep sky blue" :weight bold)))))
 (set-face-attribute 'default nil :family "IPAGothic" :height 120) ; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
 
 ;; yasnippet
@@ -758,7 +760,13 @@
 (setq clang-format-executable "clang-format-3.5")
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
 
-;; restart-eamcs
-(el-get-bundle 'restart-emacs)
+(global-set-key (kbd "C-q M-i") 'quoted-insert)
+(global-set-key (kbd "C-x C-r") 'eval-region)
 
 (load-file "~/.emacs.d/private.el")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
