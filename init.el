@@ -744,6 +744,19 @@
 (ac-config-default)
 (global-auto-complete-mode 1)
 (add-to-list 'ac-modes 'YaTeX-mode)
+(setq ac-auto-start 4
+      ac-auto-show-menu 0.8
+      ac-use-comphist t
+      ac-candidate-limit nil
+      ac-use-quick-help nil
+      ac-use-menu-map t)
+(define-key ac-completing-map (kbd "<tab>") 'nil)
+(define-key ac-completing-map (kbd "M-/")   'ac-stop)
+(define-key ac-completing-map (kbd "RET") nil)
+(setf (symbol-function 'yas-active-keys)
+      (lambda ()
+        (remove-duplicates
+         (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
 
 ;; clang-format
 (require 'clang-format)
