@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sf
+# key: sf
+# --
+`(if (YaTeX-in-math-mode-p) "\\mathsf{" "\\sf{")`${1:}\}

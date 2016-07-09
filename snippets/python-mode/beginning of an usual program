@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: beginning of an usual program
+# key: header
+# --
+# -*- coding: utf-8 -*-
+#!/usr/bin/python
