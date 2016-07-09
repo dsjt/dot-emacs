@@ -758,6 +758,13 @@
         (remove-duplicates
          (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
 
+;; auto-insert
+(auto-insert-mode)
+(setq auto-insert-directory "~/.emacs.d/template/")
+(setq auto-insert-query nil)
+(define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
+(define-auto-insert '("\\.tex$" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
+
 ;; clang-format
 (require 'clang-format)
 (setq clang-format-executable "clang-format-3.5")
