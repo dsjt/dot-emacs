@@ -505,10 +505,10 @@
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
- '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))) t)
+ '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))))
  '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
  '(org-agenda-done ((t (:foreground "disabledControlTextColor" :strike-through t))))
- '(org-done ((t (:foreground "secondaryLabelColor" :strike-through "black" :weight bold))))
+ '(org-done ((t (:foreground "disabledControlTextColor" :strike-through "black" :weight bold))))
  '(org-todo ((t (:foreground "#262" :weight bold))))
  '(outline-3 ((t (:foreground "#AFF")))))
 
@@ -715,7 +715,7 @@
 
 ;; quickrun
 (el-get-bundle! 'quickrun)
-(global-set-key (kbd "C-l r") 'quickrun)
+(global-set-key (kbd "C-l C-l r") 'quickrun)
 
 ;; gnuplot
 (el-get-bundle 'gnuplot-mode)
@@ -732,12 +732,25 @@
     global-map "C-l" '(("[" . (backward-paragraph))
                        ("]" . (forward-paragraph))))
 
+
 (el-get-bundle auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
-(setq ac-use-menu-map t)
 (global-auto-complete-mode)
 (add-to-list 'ac-modes 'YaTeX-mode)
+(setq ac-auto-start 4
+      ac-auto-show-menu 0.8
+      ac-use-comphist t
+      ac-candidate-limit nil
+      ac-use-quick-help nil
+      ac-use-menu-map t)
+(define-key ac-completing-map (kbd "<tab>") 'nil)
+(define-key ac-completing-map (kbd "M-/")   'ac-stop)
+(define-key ac-completing-map (kbd "RET") nil)
+(setf (symbol-function 'yas-active-keys)
+      (lambda ()
+        (remove-duplicates
+         (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
 
 ;; (load "~/.emacs.d/site-lisp/27_org.el")
 (custom-set-variables
@@ -748,7 +761,6 @@
  '(column-number-mode t)
  '(cursor-type (quote bar))
  '(howm-directory "~/howm")
- '(howm-view-use-grep t)
  '(initial-frame-alist
    (quote
     ((vertical-scroll-bars)
@@ -806,10 +818,11 @@
 (setq ispell-program-name "aspell")
 (put 'dired-find-alternate-file 'disabled nil)
 
-
+;; tramp
 (require 'tramp)
 (setq tramp-default-method "scp")
 
+;; mac / customize off
 (global-unset-key (kbd "s-,"))
 
 ;; path config これがないと，platexが実行できなかったりします．
@@ -820,4 +833,12 @@
 ;; restart-eamcs
 (el-get-bundle 'restart-emacs)
 
+;; auto-insert
+(auto-insert-mode)
+(setq auto-insert-directory "~/.emacs.d/template/")
+(setq auto-insert-query nil)
+(define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
+(define-auto-insert '("\\.tex$" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
+
 (load-file "~/.emacs.d/private.el")
+
