@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: scipy
+# key: scipy
+# --
+import scipy as sp
+import matplotlib.pyplot as plt

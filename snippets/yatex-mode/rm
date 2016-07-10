@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: rm
+# key: rm
+# --
+`(if (YaTeX-in-math-mode-p) "\\mathrm" "\\rm")`\{$0\}
