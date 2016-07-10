@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: array33
+# key: 33a
+# binding: direct-keybinding
+# --
+$1_{11}&$1_{12}&$1_{13}\\\\
+$1_{21}&$1_{22}&$1_{23}\\\\
+$1_{31}&$1_{32}&$1_{33}\\\\$0
+

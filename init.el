@@ -270,7 +270,7 @@
 (setq YaTeX-kanji-code nil)
 (setq YaTeX-coding-system nil)
 (add-to-list 'auto-mode-alist
-             '("\\.tex$" . 'yatex-mode))
+             '("\\.tex\\'" . yatex-mode))
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (setq YaTeX-fill-column 80)
 (setq YaTeX-latex-message-code 'utf-8)
@@ -763,7 +763,7 @@
 (setq auto-insert-directory "~/.emacs.d/template/")
 (setq auto-insert-query nil)
 (define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
-(define-auto-insert '("\\.tex$" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
+(define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
 
 ;; clang-format
 (require 'clang-format)

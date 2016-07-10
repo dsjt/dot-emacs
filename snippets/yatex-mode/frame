@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: frame
+# key: frame
+# binding: 
+# --
+\begin{frame}
+$0
+\end{frame}

@@ -1,0 +1,5 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: g++
+# key: g++
+# --
+g++ -Wall -O2 -o ${1:name} $1.cpp

@@ -1,0 +1,18 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: beamer-header
+# key: beamer-header
+# binding: direct-keybinding
+# --
+\documentclass[dvipdfmx,cjk]{beamer}
+
+\AtBeginDvi{\special{pdf:tounicode EUC-UCS2}}
+\usetheme{Boadilla}
+\setbeamertemplate{navigation symbols}{} %% 右下のアイコンを消す
+\setbeamertemplate{theorems}[numbered] %% 定理に番号をつける
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{proposition}[thm]{Proposition}
+\theoremstyle{example}
+\newtheorem{exam}[thm]{Example}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{question}[thm]{Question}
+\newtheorem{prob}[thm]{Problem}

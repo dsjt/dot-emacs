@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: section
+# key: sec
+# binding: direct-keybinding
+# --
+\section{$1}
+`(YaTeX-indent-line)`$0

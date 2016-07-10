@@ -1,0 +1,6 @@
+# name: for ... in ... : ...
+# key: for
+# group : control structure
+# --
+for ${1:x} in ${2:range(10)}:
+    $0
