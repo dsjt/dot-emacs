@@ -703,7 +703,7 @@
                             (line-end-position)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
 (setq python-shell-interpreter "python3"
-      python-shell-interpreter-args "-i"
+      python-shell-interpreter-args "-iu"
       indent-tabs-mode nil
       indent-level 4
       python-indent 4
