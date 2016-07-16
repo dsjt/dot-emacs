@@ -395,18 +395,18 @@
         (http . t)
         (ruby . t)
         (python . t)))
-(setq org-babel-confirm-evaluate nil)
+(setq org-confirm-babel-evaluate nil)
 (define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
 (define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
 
 ;; ob-python
 (el-get-bundle 'f)
-;; (el-get-bundle! 'gregsexton/ob-ipython)
+(el-get-bundle! 'gregsexton/ob-ipython)
 ;; ipython3 のための 再定義
-;; (defun ob-ipython--kernel-repl-cmd (name)
-;;   (list "ipython3" "console" "--existing" (format "emacs-%s.json" name)))
+(defun ob-ipython--kernel-repl-cmd (name)
+  (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (autoload 'org-babel-execute:python "ob-python.el")
-(setq org-babel-python-command "python3")
+(setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
 
 ;; ob-http
