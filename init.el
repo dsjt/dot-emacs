@@ -57,14 +57,15 @@
 (setq hl-line-face 'hlline-face)
 (global-hl-line-mode 1)
 (setq gc-cons-threshold (* 10 gc-cons-threshold))
-(setq-default tab-width 4 indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
-(column-number-mode)
+(column-number-mode 1)
 (setq-default fill-column 80)
-(transient-mark-mode)
+(transient-mark-mode 1)
 (setq mark-ring-max 64
       kill-whole-line t
       visible-bell nil)
@@ -185,7 +186,7 @@
 (el-get-bundle! 'smartrep)
 
 ;; expand-region
-(el-get-bundle 'expand-region)
+(el-get-bundle expand-region)
 (global-set-key (kbd "C-@") 'er/expand-region)
 (global-set-key (kbd "C-M-@") 'er/contract-region)
 
@@ -195,12 +196,8 @@
       uniquify-ignore-buffers-re "*[^*]+*")
 
 ;; anzu
-(el-get-bundle 'anzu)
+(el-get-bundle anzu)
 (global-anzu-mode 1)
-;; isearchの数を出してくれるだけで十分
-;; (global-set-key (kbd "C-x q") 'anzu-query-replace) 
-;; (global-set-key (kbd "C-x Q") 'anzu-query-replace-regexp)
-;; (global-set-key (kbd "C-x M-q") 'anzu-query-replace-at-cursor)
 
 ;; visual-regexp
 (el-get-bundle 'visual-regexp)
@@ -261,9 +258,9 @@
 (global-set-key (kbd "C-x f") 'open-junk-file)
 
 ;; ess
-(el-get-bundle 'elpa:ess)
-(add-to-list 'load-path "~/.emacs.d/el-get/ess/lisp")
-(require 'ess-site)
+;; (el-get-bundle 'elpa:ess)
+;; (add-to-list 'load-path "~/.emacs.d/el-get/ess/lisp")
+;; (require 'ess-site)
 
 ;; yatex
 (el-get-bundle 'elpa:yatex)
@@ -273,15 +270,16 @@
              '("\\.tex$" . 'yatex-mode))
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (setq YaTeX-fill-column 80)
-(setq YaTeX-latex-message-code 'utf-8)
+(setq YaTeX-latex-message-code nil)
+(setq bibtex-command "pbibtex")
 
 ;; org-mode
 (el-get-bundle 'org)
-(setq org-startup-folded nil
-      org-hide-leading-stars t
-      org-log-done 'time
-      org-use-fast-todo-selection nil
-      org-use-speed-commands t)
+(setq org-startup-folded nil)
+(setq org-hide-leading-stars t)
+(setq org-log-done 'time)
+(setq org-use-fast-todo-selection nil)
+(setq org-use-speed-commands t)
 (smartrep-define-key
     org-mode-map "C-c" '(("p" . (outline-previous-visible-heading 1))
                          ("n" . (outline-next-visible-heading 1))
@@ -386,6 +384,7 @@
 ;; (setq org-html-postamble t)
 
 ;; babel
+(setq org-confirm-babel-evaluate nil)
 (setq org-babel-load-languages
       '((R . t)
         (C . t)
@@ -394,31 +393,37 @@
         (gnuplot . t)
         (http . t)
         (ruby . t)
-        (python . t)))
+        (python . t)
+        (dot . t)))
 (setq org-babel-confirm-evaluate nil)
 (define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
 (define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
+(setq org-image-actual-width '(256))
 
 ;; ob-python
 (el-get-bundle 'f)
-;; (el-get-bundle! 'gregsexton/ob-ipython)
+(el-get-bundle! 'gregsexton/ob-ipython)
 ;; ipython3 のための 再定義
 ;; (defun ob-ipython--kernel-repl-cmd (name)
 ;;   (list "ipython3" "console" "--existing" (format "emacs-%s.json" name)))
 (autoload 'org-babel-execute:python "ob-python.el")
-(setq org-babel-python-command "python3")
+(setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
-
+(setq org-babel-default-header-args:python '((:session . "my_session")))
+;; ob-sh
+(require 'ob-sh)
 ;; ob-http
 (el-get-bundle 'ob-http)
 
-;;;###autoload
-(defun my/toggle-yatex-mode-temporarily ()
-  (interactive)
-  (cond ((not (eq major-mode 'yatex-mode))
-         (yatex-mode))
-        (t (normal-mode))))
-(global-set-key (kbd "C-c Y") 'my/toggle-yatex-mode-temporarily)
+;; ;;;###autoload
+;; (defun my/toggle-yatex-mode-temporarily ()
+;;   (interactive)
+;;   (cond ((not (eq major-mode 'yatex-mode))
+;;          (yatex-mode))
+;;         (t (normal-mode))))
+;; (global-set-key (kbd "C-c Y") 'my/toggle-yatex-mode-temporarily)
+;; (setq org-latex-with-hyperref nil)
+;; (setq org-latex-pdf-process '("platex %f" "dvipdfmx %b.dvi"))
 
 ;; org-external
 (setq org-file-apps '(("\\.rd\\'" . emacs)
@@ -427,26 +432,16 @@
                       ("\\.mm\\'" . default)
                       ("\\.x?html?\\'" . default)))
 (setq org-link-file-path-type 'relative)
-(defvar pdf-viewer "evince")
-;;;###autoload
-(defun view-pdf()
-  (interactive)
-  (let ((pdf-file (concat (file-name-sans-extension (buffer-file-name)) ".pdf"))
-        (viewer pdf-viewer))
-    (if (file-exists-p pdf-file)
-        (start-process "*view-pdf*" nil viewer pdf-file)
-      (error "A pdf file doesn't exist."))))
-(define-key org-mode-map (kbd "C-\\ p") 'view-pdf)
 
-;; smartparen
-(el-get-bundle 'smartparens)
+;; smartparens
+(el-get-bundle smartparens)
 (smartparens-global-mode 1)
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 (sp-use-paredit-bindings)
-;; (electric-pair-mode nil)
+(electric-pair-mode nil)
 
 ;; expand
 (global-set-key (kbd "C-;") 'hippie-expand)
@@ -463,10 +458,10 @@
 ;; scroll 
 (el-get-bundle 'yascroll)
 (global-yascroll-bar-mode 1)
-(setq scroll-conservatively 20
-      scroll-margin 5
-      scroll-step 1
-      next-screen-context-lines 20)
+(setq scroll-conservatively 20)
+(setq scroll-margin 5)
+(setq scroll-step 1)
+(setq next-screen-context-lines 20)
 
 ;; howm
 (global-unset-key (kbd "C-q"))
@@ -474,29 +469,30 @@
       howm-view-title-header "*"
       howm-menu-lang 'ja
       howm-keyword-case-fold-search t)
-(el-get-bundle! 'howm) ; 上との順序，重要なので変更しない
-(setq howm-list-recent-title t
-      howm-list-all-title t
-      howm-menu-expiry-hours 2
-      howm-menu-schedule-days-before 10
-      howm-menu-schedule-days 7
-      howm-file-name-format "%Y/%m/%d-%H%M%S.org"
-      howm-view-grep-parse-line
-      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$"
-      howm-excluded-file-regexp
-      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$"
-      howm-menu-refresh-after-save nil
-      howm-view-summary-persistent nil
-      howm-template "* %cursor\n"
-      howm-template-file-format "[[%s]]"
-      howm-view-use-grep t
-      howm-menu-recent-num 10
-      howm-list-recent-days 20)
+(el-get-bundle! 'howm)                  ; 上との順序，重要なので変更しない
+(setq howm-list-recent-title t)
+(setq howm-list-all-title t)
+(setq howm-menu-expiry-hours 2)
+(setq howm-menu-schedule-days-before 10)
+(setq howm-menu-schedule-days 7)
+(setq howm-file-name-format "%Y/%m/%d-%H%M%S.org")
+(setq howm-view-grep-parse-line
+ "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
+(setq howm-excluded-file-regexp
+ "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$")
+(setq howm-menu-refresh-after-save nil)
+(setq howm-view-summary-persistent nil)
+(setq howm-template "* %cursor\n")
+(setq howm-template-file-format "[[%s]]")
+(setq howm-view-use-grep t)
+(setq howm-menu-recent-num 10)
+(setq howm-list-recent-days 20)
 (add-to-list 'auto-mode-alist '("\\.howm$" . org-mode))
 (add-hook 'org-mode-hook 'howm-mode)
 (set-face-attribute 'howm-mode-title-face nil :foreground nil)
 (set-face-attribute 'howm-reminder-today-face nil :foreground nil :background "#2d37aa" :box nil)
 (set-face-attribute 'howm-reminder-tomorrow-face nil :foreground nil :background "#2d4900" :box nil)
+(setq howm-view-grep-file-stdin-option nil) ;なぜか必要?
 
 ;; face
 (custom-set-faces
@@ -515,18 +511,22 @@
 (set-face-attribute 'default nil :family "IPAGothic" :height 120)
 
 ;; yasnippet
-(el-get-bundle 'yasnippet)
+(el-get-bundle yasnippet)
 (yas-global-mode 1)
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
+(el-get-bundle helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 ;; popwin
-(el-get-bundle! 'popwin)
+(el-get-bundle! popwin)
 (popwin-mode 1)
 
 ;; google-translate
 (el-get-bundle! 'google-translate)
+;;;###autoload
 (defun google-en-to-ja ()
   (interactive)
   (google-translate-translate "en" "ja"
@@ -553,8 +553,8 @@
 
 ;; c言語
 (setq-default c-hungry-delete-key nil)
-(add-hook 'c++-mode-hook 'my/electric-indent-mode-on)
-(add-hook 'c-mode-hook 'my/electric-indent-mode-on)
+(add-hook 'c++-mode-hook 'electric-indent-mode)
+(add-hook 'c-mode-hook 'electric-indent-mode)
 ;;;###autoload 
 (defun my/astyle ()
   "Implement astyle to c-code when saving it."
@@ -579,13 +579,14 @@
 (global-set-key (kbd "M-o") 'add-new-line-above)
 
 ;; folding
+(require 'hideshow)
 (add-hook 'html-mode-hook 'hs-minor-mode)
 (add-hook 'lisp-mode-hook 'hs-minor-mode)
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
-(add-hook 'python-mode-hook 'hs-minor-mode)
 (add-hook 'latex-mode-hook 'hs-minor-mode)
 (add-hook 'YaTeX-mode-hook 'hs-minor-mode)
+(add-hook 'python-mode-hook 'hs-minor-mode)
 (define-key hs-minor-mode-map (kbd "C-^") 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-M-^") 'hs-hide-all)
 (define-key hs-minor-mode-map (kbd "C-M-~") 'hs-show-all)
@@ -626,13 +627,9 @@
 
 ;; window
 (winner-mode 1)
-;; 使えない
-;; (smartrep-define-key
-;;     global-map "C-c" '(("<left>" . (winner-undo))
-;;                        ("<right>" . (winner-redo))))
 
 ;; multiple-cursors
-(el-get-bundle! 'multiple-cursors)
+(el-get-bundle! multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -702,15 +699,17 @@
   (python-shell-send-region (line-beginning-position)
                             (line-end-position)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
-(setq python-shell-interpreter "python3"
-      python-shell-interpreter-args "-i"
-      indent-tabs-mode nil
-      indent-level 4
-      python-indent 4
-      tab-width 4)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(setq python-shell-interpreter "python")
+(setq python-shell-interpreter-args "-i")
+(setq indent-tabs-mode nil)
+(setq indent-level 4)
+(setq python-indent 4)
+(setq tab-width 4)
+(setq python-indent-guess-indent-offset nil)
 
 ;; jedi
-(el-get-bundle 'jedi)
+(el-get-bundle jedi)
 ;; (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 (setq jedi:complete-on-dot t)
@@ -720,8 +719,8 @@
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 
 ;; quickrun
-(el-get-bundle 'quickrun)
-(global-set-key (kbd "C-l r") 'quickrun)
+(el-get-bundle! 'quickrun)
+(global-set-key (kbd "C-l C-l r") 'quickrun)
 
 ;; gnuplot
 (el-get-bundle 'gnuplot-mode)
@@ -730,7 +729,7 @@
 (setq scheme-program-name "jakld")
 
 ;; avy  ,ace-jump-mode の後継
-(el-get-bundle 'avy)
+(el-get-bundle! 'avy)
 (global-set-key (kbd "C-M-j") 'avy-goto-char)
 (el-get-bundle 'ace-jump-mode)
 (load-file "~/.emacs.d/site-lisp/ace-pinyin-myconf.el")
@@ -739,7 +738,7 @@
                        ("]" . (forward-paragraph))))
 
 ;; auto-complete
-(el-get-bundle 'auto-complete)
+(el-get-bundle auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
 (global-auto-complete-mode 1)
@@ -758,6 +757,10 @@
         (remove-duplicates
          (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
 
+;; tramp
+(require 'tramp)
+(setq tramp-default-method "scp")
+
 ;; auto-insert
 (auto-insert-mode)
 (setq auto-insert-directory "~/.emacs.d/template/")
@@ -774,6 +777,7 @@
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
 (global-set-key (kbd "C-x C-r") 'eval-region)
 
+;; private
 (load-file "~/.emacs.d/private.el")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
