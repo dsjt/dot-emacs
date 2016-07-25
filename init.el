@@ -179,7 +179,9 @@
 ;;color
 (add-to-list 'custom-theme-load-path "~/.emacs.d/theme/")
 (global-set-key (kbd "<f1>C-d") 'describe-face)
-(load-theme 'charcoal-black t)
+(if (eq system-type 'darwin)
+    (load-theme 'misterioso t)
+  (load-theme 'charcoal-black t))
 (set-cursor-color "white")
 
 ;; smartrep  ;; 使っているので注意
@@ -208,6 +210,7 @@
 
 ;; point-undo
 (el-get-bundle! 'point-undo)
+(require 'point-undo)
 (global-set-key (kbd "C-.") 'point-undo)
 (global-set-key (kbd "C-M-.") 'point-redo)
 (global-set-key (kbd "<f7>") 'point-undo)
@@ -231,6 +234,8 @@
 (el-get-bundle 'dired+)
 (setq dired-dwim-target t
       delete-by-moving-to-trash t)
+(when (eq system-type 'darwin)
+  (setq trash-directory "~/.Trash"))
 (global-dired-hide-details-mode -1)
 ;; diredで開いたpdfをrecentfに追加するための設定．
 (defadvice dired-find-file (before add-recentf)
@@ -241,6 +246,7 @@
 
 ;; dired-hacks
 (el-get-bundle 'dired-hacks)
+(el-get-bundle! 'f)
 (require 'dired-filter)
 (setq dired-filter-group-saved-groups
       '(("default"
@@ -271,6 +277,10 @@
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (setq YaTeX-fill-column 80)
 (setq YaTeX-latex-message-code nil)
+(when (eq system-type 'darwin)
+  (setq YaTeX-dvi2-command-ext-alist
+        '(("[agxk]dvi\\|dviout" . ".dvi")
+          ("ghostview\\|gv" . ".ps") ("acroread\\|[xk]pdf\\|pdfopen\\|Preview\\|TeXShop\\|Skim\\|evince\\|mupdf\\|zathura\\|okular\\|open" . ".pdf"))))
 (setq bibtex-command "pbibtex")
 
 ;; org-mode
@@ -404,8 +414,8 @@
 (el-get-bundle 'f)
 (el-get-bundle! 'gregsexton/ob-ipython)
 ;; ipython3 のための 再定義
-(defun ob-ipython--kernel-repl-cmd (name)
-  (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
+;; (defun ob-ipython--kernel-repl-cmd (name)
+;;   (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (autoload 'org-babel-execute:python "ob-python.el")
 (setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
@@ -413,7 +423,7 @@
 ;; ob-sh
 (require 'ob-sh)
 ;; ob-http
-(el-get-bundle 'ob-http)
+;; (el-get-bundle 'ob-http)
 
 ;; ;;;###autoload
 ;; (defun my/toggle-yatex-mode-temporarily ()
@@ -432,6 +442,12 @@
                       ("\\.mm\\'" . default)
                       ("\\.x?html?\\'" . default)))
 (setq org-link-file-path-type 'relative)
+
+;; org-archive
+(setq org-archive-location
+      (concat "%s_archive_"
+              (format-time-string "%Y::" (current-time))))
+
 
 ;; smartparens
 (el-get-bundle smartparens)
@@ -477,9 +493,9 @@
 (setq howm-menu-schedule-days 7)
 (setq howm-file-name-format "%Y/%m/%d-%H%M%S.org")
 (setq howm-view-grep-parse-line
- "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
+      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
 (setq howm-excluded-file-regexp
- "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$")
+      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$\\|\\.h5$")
 (setq howm-menu-refresh-after-save nil)
 (setq howm-view-summary-persistent nil)
 (setq howm-template "* %cursor\n")
@@ -500,6 +516,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cursor ((t (:background "highlightColor"))))
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
@@ -593,11 +610,15 @@
 (define-key hs-minor-mode-map (kbd "C-l ^") '(lambda () (interactive) (hs-hide-level 2)))
 
 ;; external program utility
+(defvar my/open-command nil)
+(if (eq system-type 'darwin)
+    (setq my/open-command "open")
+  (setq my/open-command "nautilus"))
 ;;;###autoload
 (defun start-nautilus ()
   (interactive)
   (let ((dd (expand-file-name default-directory)))
-    (async-start-process "nautilus" "nautilus" 'ignore dd)))
+    (async-start-process "Filer" my/open-command 'ignore dd)))
 (global-set-key (kbd "C-\\ e") 'start-nautilus)
 ;;;###autoload
 (defun start-gnome-terminal ()
@@ -670,21 +691,21 @@
 
 ;; openwith
 (el-get-bundle 'openwith)
-(setq openwith-associations
-      '(("\\.pdf\\'" "evince" (file))
-        ;; ("\\.\\(?:mp3\\|wav\\|ogg\\)\\'" "mplayer" (file))
-        ;; ("\\.\\(?:png\\|jpg\\|jpg-large\\|gif\\|bmp\\)\\'" "display" (file)) ;eogからdisplayへ変更
-        ;; ("\\.ods\\'" "libreoffice" (file))
-        ))
+(if (eq system-type 'darwin)
+    (setq openwith-associations
+          '(("\\.pdf\\'" "open" (file))
+            ("\\.xlsx\\'" "open" (file))
+            ("\\.eps\\'" "open" (file))))
+  '(("\\.pdf\\'" "evince" (file))))
 
-;; number
-(el-get-bundle 'number)
-(global-set-key (kbd "C-c C-+") 'number/add)
-(global-set-key (kbd "C-c C--") 'number/sub)
-(global-set-key (kbd "C-c C-*") 'number/multiply)
-(global-set-key (kbd "C-c C-/") 'number/divide)
-(global-set-key (kbd "C-c C-0") 'number/pad)
-(global-set-key (kbd "C-c C-=") 'number/eval)
+;; ;; number
+;; (el-get-bundle 'number)
+;; (global-set-key (kbd "C-c C-+") 'number/add)
+;; (global-set-key (kbd "C-c C--") 'number/sub)
+;; (global-set-key (kbd "C-c C-*") 'number/multiply)
+;; (global-set-key (kbd "C-c C-/") 'number/divide)
+;; (global-set-key (kbd "C-c C-0") 'number/pad)
+;; (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
 (setq backup-directory-alist
@@ -756,6 +777,10 @@
       (lambda ()
         (remove-duplicates
          (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
+
+;; tramp
+(require 'tramp)
+(setq tramp-default-method "scp")
 
 ;; tramp
 (require 'tramp)
