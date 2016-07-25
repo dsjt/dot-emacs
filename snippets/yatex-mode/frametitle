@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: frametitle
+# key: frametitle
+# binding: direct-keybinding
+# --
+\frametitle{$1}
+$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: table
+# key: table
+# --
+\begin{table}[htbp]
+ \begin{tabular}{$1}
+   $0
+ \end{tabular}
+\end{table}

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: differentiation
+# key: d
+# --
+\text{d}$0

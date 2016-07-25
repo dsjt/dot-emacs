@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: bin
+# key: bin
+# binding: direct-keybinding
+# --
+#! /usr/bin/python

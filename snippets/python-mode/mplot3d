@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: mplot3d
+# key: mplot3d
+# binding: direct-keybinding
+# --
+from mpl_toolkits.mplot3d import Axes3D
