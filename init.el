@@ -402,7 +402,6 @@
 ;; ob-python
 (el-get-bundle 'f)
 (el-get-bundle! 'gregsexton/ob-ipython)
-;; ipython3 のための 再定義
 (defun ob-ipython--kernel-repl-cmd (name)
   (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (autoload 'org-babel-execute:python "ob-python.el")
@@ -437,6 +436,13 @@
         (start-process "*view-pdf*" nil viewer pdf-file)
       (error "A pdf file doesn't exist."))))
 (define-key org-mode-map (kbd "C-\\ p") 'view-pdf)
+
+;; org-bullets
+;; (add-hook 'org-mode-hook 'org-bullets-mode-on)
+;; ;;;###autoload
+;; (defun org-bullets-mode-on()
+;;   (el-get-bundle! 'org-bullets)
+;;   (org-bullets-mode 1))
 
 ;; smartparen
 (el-get-bundle 'smartparens)
@@ -508,7 +514,7 @@
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
  '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))))
- '(org-agenda-done ((t (:foreground "dark gray"))))
+ '(org-agenda-done ((t (:foreground "dark gray" :strike-through t))))
  '(org-done ((t (:foreground "black" :strike-through "black" :weight bold))))
  '(org-todo ((t (:foreground "deep sky blue" :weight bold)))))
 ;; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
@@ -770,6 +776,9 @@
 (setq clang-format-executable "clang-format-3.5")
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
 
+;; zen-coding
+(el-get-bundle! zencoding-mode)
+
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
 (global-set-key (kbd "C-x C-r") 'eval-region)
@@ -781,3 +790,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
