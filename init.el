@@ -781,10 +781,6 @@
 (require 'tramp)
 (setq tramp-default-method "scp")
 
-;; tramp
-(require 'tramp)
-(setq tramp-default-method "scp")
-
 ;; auto-insert
 (auto-insert-mode)
 (setq auto-insert-directory "~/.emacs.d/template/")
