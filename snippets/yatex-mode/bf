@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bf
+# key: bf
+# --
+`(if (YaTeX-in-math-mode-p) "\\mathbf{" "\\bf{")`${1:}\}

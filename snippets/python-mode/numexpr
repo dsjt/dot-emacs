@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: numexpr
+# key: numexpr
+# --
+import numexpr as ne

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: stride
+# key: stride
+# --
+from numpy.lib.stride_tricks import as_strided

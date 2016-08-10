@@ -1,0 +1,4 @@
+# key: linalg
+# name: linalg
+# --
+from scipy import linalg

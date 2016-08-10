@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: autoinsert-at-yatex
+# key: autoinsert
+# --
+\documentclass[a4paper,11pt]{${1:jsarticle}}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\title{${2:title}}
+\author{${3:学籍番号 6930-28-1472 \\ 石田達大}}
+\date{${4:`(format-time-string "%Y年%m月%d日" (current-time))`}}
+\begin{document}
+\maketitle
+$0
+\end{document}
