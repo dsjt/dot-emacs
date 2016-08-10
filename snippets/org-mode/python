@@ -1,7 +1,8 @@
-# -*- mode: snippet -*-
+# -*- mode: snippet; require-final-newline: nil -*-
 # name: python
 # key: python
+# binding: direct-keybinding
 # --
-#+begin_src python
+#+begin_src python :session
 $0
 #+end_src
