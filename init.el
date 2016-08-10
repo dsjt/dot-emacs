@@ -872,5 +872,4 @@
 ;; private
 (load-file "~/.emacs.d/private.el")
 
-
 (put 'dired-find-alternate-file 'disabled nil)
