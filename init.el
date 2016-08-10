@@ -179,7 +179,9 @@
 ;;color
 (add-to-list 'custom-theme-load-path "~/.emacs.d/theme/")
 (global-set-key (kbd "<f1>C-d") 'describe-face)
-(load-theme 'misterioso t)
+(if (eq system-type 'darwin)
+    (load-theme 'misterioso t)
+  (load-theme 'charcoal-black t))
 (set-cursor-color "white")
 
 ;; smartrep  ;; 使っているので注意
@@ -365,26 +367,8 @@
 (setq org-columns-default-format
       "%50ITEM{Task} %TODO %8EFFORT{:} %6CLOCKSUM{Total}")
 
-;; (setq org-html-validation-link nil)
-;; (setq org-latex-default-class "jsarticle")
-;; (defvar org-latex-classes nil)
-;; (setq org-latex-default-packages-alist
-;;       '(("dvipdfmx" "graphicx" t)
-;;         ("" "amsmath" t)
-;;         ("" "amssymb" t)
-;;         ("" "amsfonts" t)
-;;         ))
-;; ("jsarticle"
-;;  "\\documentclass[11pt]{jsarticle}"
-;;  ("\\section{%s}" . "\\section*{%s}")
-;;  ("\\subsection{%s}" . "\\subsection*{%s}")
-;;  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;;  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;;  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-;; (setq org-latex-pdf-process
-;;       '("platex %b"
-;;         "platex %b"
-;;         "dvipdfmx %b"))
+;; export
+;; org->latex
 
 ;; babel
 (setq org-confirm-babel-evaluate nil)
@@ -399,9 +383,6 @@
         (python . t)
         (dot . t)))
 (setq org-confirm-babel-evaluate nil)
-;; ipython3 のための 再定義
-;; (defun ob-ipython--kernel-repl-cmd (name)
-;;   (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
 (define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
 (setq org-image-actual-width '(256))
@@ -409,6 +390,9 @@
 ;; ob-python
 (el-get-bundle 'f)
 (el-get-bundle! 'gregsexton/ob-ipython)
+;; ipython3 のための 再定義
+;; (defun ob-ipython--kernel-repl-cmd (name)
+;;   (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (autoload 'org-babel-execute:python "ob-python.el")
 (setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
@@ -441,9 +425,7 @@
       (concat "%s_archive_"
               (format-time-string "%Y::" (current-time))))
 
-
-;; smartparens
-(el-get-bundle smartparens)
+(el-get-bundle 'smartparens)
 (smartparens-global-mode 1)
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
@@ -513,12 +495,15 @@
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
- '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))))
- '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
- '(org-agenda-done ((t (:foreground "disabledControlTextColor" :strike-through t))))
+ '(org-todo ((t (:foreground "deep sky blue" :weight bold))))
  '(org-done ((t (:foreground "disabledControlTextColor" :strike-through "black" :weight bold))))
- '(org-todo ((t (:foreground "#262" :weight bold))))
+ '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))))
+ '(org-agenda-done ((t (:foreground "disabledControlTextColor" :strike-through t))))
+ '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
  '(outline-3 ((t (:foreground "#AFF")))))
+
+;; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
+(set-face-attribute 'default nil :family "IPAGothic" :height 120)
 
 ;; yasnippet
 (el-get-bundle yasnippet)
@@ -613,12 +598,21 @@
   (let ((dd (expand-file-name default-directory)))
     (async-start-process "Filer" my/open-command 'ignore dd)))
 (global-set-key (kbd "C-¥ e") 'start-nautilus)
+(global-set-key (kbd "C-\\ e") 'start-nautilus)
 ;;;###autoload
 (defun start-gnome-terminal ()
   (interactive)
   (let ((dd (expand-file-name default-directory)))
+    (async-start-process "gnome-terminal" "gnome-terminal" 'ignore default-directory)))
+(global-set-key (kbd "C-\\ c") 'start-gnome-terminal)
+(global-set-key (kbd "C-\\ E") 'eshell)
+(global-set-key (kbd "C-\\ M-e") 'my/popup-eshell)
+;;;###autoload
+(defun start-mac-terminal ()
+  (interactive)
+  (let ((dd (expand-file-name default-directory)))
     (async-start-process "terminal" "open" 'ignore "-a" "Terminal" dd)))
-(global-set-key (kbd "C-¥ c") 'start-gnome-terminal)
+(global-set-key (kbd "C-¥ c") 'start-mac-terminal)
 (global-set-key (kbd "C-¥ E") 'eshell)
 (global-set-key (kbd "C-¥ M-e") 'my/popup-eshell)
 ;;;###autoload
@@ -629,6 +623,7 @@
       (setq eb (eshell arg)))
     (popwin:popup-buffer-tail eb)))
 (global-set-key (kbd "C-¥ 9") 'popwin:stick-popup-window)
+(global-set-key (kbd "C-\\ 9") 'popwin:stick-popup-window)
 
 ;; inhibit-splash-screen
 ;;;###autoload
@@ -775,55 +770,6 @@
 (require 'tramp)
 (setq tramp-default-method "scp")
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(cursor-type (quote bar))
- '(howm-directory "~/howm")
- '(initial-frame-alist
-   (quote
-    ((vertical-scroll-bars)
-     (top . 40)
-     (left . 3)
-     (height . 46)
-     (width . 140))))
- '(org-agenda-todo-ignore-scheduled nil)
- '(org-latex-classes
-   (quote
-    (("article" "\\documentclass[11pt]{article}"
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-     ("report" "\\documentclass[11pt]{report}"
-      ("\\part{%s}" . "\\part*{%s}")
-      ("\\chapter{%s}" . "\\chapter*{%s}")
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-     ("book" "\\documentclass[11pt]{book}"
-      ("\\part{%s}" . "\\part*{%s}")
-      ("\\chapter{%s}" . "\\chapter*{%s}")
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-     ("jsarticle" "\\documentclass[11pt]{jsarticle}"
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
- '(safe-local-variable-values
-   (quote
-    ((YaTeX-parent-file . \.\./main\.tex)
-     (tex-main-file . \.\./main\.tex))))
- '(show-paren-mode t)
- '(tool-bar-mode nil))
-
 ;;; フォント周り
 (set-face-attribute 'default nil :family "Menlo" :height 140)
 (set-fontset-font t 'japanese-jisx0208
@@ -831,14 +777,9 @@
                              :size 16))
 (add-to-list 'face-font-rescale-alist
              '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
-;;; あいうえおかきくけこ
-;;; axaxaxaxaxaxaxaxaxax
 
 (global-set-key (kbd "M-¥") 'delete-horizontal-space)
 
-;; tramp
-(require 'tramp)
-(setq tramp-default-method "scp")
 
 ;; mac / customize off
 (when (eq system-type 'darwin)
@@ -865,6 +806,22 @@
   (let ((value (org-element-property :value example-block)))
     (concat "<pre>" value "\n</pre>")))
 
+;; clang-format
+(require 'clang-format)
+(setq clang-format-executable "clang-format-3.5")
+(set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
+
+;; zen-coding
+(el-get-bundle! zencoding-mode)
+
+;; shceme
+(setq process-coding-system-alist
+      (cons '("gosh" utf-8 . utf-8) process-coding-system-alist))
+(setq scheme-program-name "/usr/bin/gosh -i")
+(autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
+(autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
+(define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)
+
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
 (global-set-key (kbd "C-x C-r") 'eval-region)
@@ -873,3 +830,11 @@
 (load-file "~/.emacs.d/private.el")
 
 (put 'dired-find-alternate-file 'disabled nil)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+

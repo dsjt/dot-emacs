@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: includegraphics
+# key: incl
+# binding: direct-keybinding
+# --
+\includegraphics[width=$1\hsize]{$0}

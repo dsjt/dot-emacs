@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: array
+# key: array
+# binding: direct-keybinding
+# --
+\left(
+\begin{array}{${1:ccc}}
+$0
+\end{array}
+\right)
