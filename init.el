@@ -3,6 +3,7 @@
   (setq mac-command-modifier (quote meta))
   (setq mac-option-modifier (quote super)))
 
+;; el-get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -16,7 +17,7 @@
 (server-start)
 
 ;; needless key-bindings
-(global-unset-key (kbd "C-l"))        ;prefix key
+(global-unset-key (kbd "C-l"))          ;prefix key
 (global-unset-key (kbd "C-x l"))        ;prefix key
 (global-unset-key (kbd "C-x C-z"))
 (global-unset-key (kbd "C-\\"))
@@ -36,8 +37,6 @@
 (global-set-key (kbd "C-:") 'recenter-top-bottom)
 (global-set-key (kbd "C-x C-l") 'load-file)
 (global-set-key (kbd "C-l C-r") 'revert-buffer)
-(global-set-key (kbd "C-q M-i") 'quoted-insert)
-(global-set-key (kbd "C-x C-r") 'eval-region)
 
 ;; basic configuration
 (setq inhibit-startup-screen t)
@@ -58,13 +57,14 @@
 (setq hl-line-face 'hlline-face)
 (global-hl-line-mode 1)
 (setq gc-cons-threshold (* 10 gc-cons-threshold))
-(setq-default tab-width 4 indent-tabs-mode nil) ;;tabを半角スペース2個にする。
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (column-number-mode 1)
-(setq-default fill-column 80) ;;auto-fill
+(setq-default fill-column 80)
 (transient-mark-mode 1)
 (setq mark-ring-max 64
       kill-whole-line t
@@ -74,6 +74,7 @@
 (global-visual-line-mode 1)
 (setq-default line-move-visual nil)
 (set-default 'cursor-type 'bar)
+(mouse-avoidance-mode 'exile)
 (add-hook 'emacs-lisp-mode 'electric-indent-mode)
 ;;;###autoload
 (defun kill-other-buffers ()
@@ -100,11 +101,8 @@
 ;;;###autoload
 (defun one-line-comment ()
   (interactive)
-  (move-beginning-of-line 1)
-  (let ((b (point)))
-    (move-end-of-line 1)
-    (let ((e (point)))
-      (comment-or-uncomment-region b e))))
+  (comment-or-uncomment-region (line-beginning-position)
+                               (line-end-position)))
 (global-set-key (kbd "C-M-;") 'one-line-comment)
 ;;;###autoload
 (defun duplicate-line ()
@@ -135,6 +133,9 @@
 
 ;; org-mode をこの位置でロードしておくことで競合の発生を避ける
 (el-get-bundle 'org)
+
+;; restart-eamcs
+(el-get-bundle 'restart-emacs)
 
 ;; helm
 (el-get-bundle 'helm)
@@ -171,13 +172,12 @@
 (global-set-key (kbd "C-z") 'helm-recentf)
 
 ;; sequential-command
-(el-get-bundle! 'elpa:sequential-command)
+(el-get-bundle 'elpa:sequential-command)
 (require 'sequential-command-config)
 (sequential-command-setup-keys)
 
 ;;color
-(add-to-list 'custom-theme-load-path
-             "~/.emacs.d/theme/")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/theme/")
 (global-set-key (kbd "<f1>C-d") 'describe-face)
 (load-theme 'misterioso t)
 (set-cursor-color "white")
@@ -232,6 +232,9 @@
 (el-get-bundle 'dired+)
 (setq dired-dwim-target t
       delete-by-moving-to-trash t)
+(when (eq system-type 'darwin)
+  (setq trash-directory "~/.Trash"))
+
 (global-dired-hide-details-mode -1)
 ;; diredで開いたpdfをrecentfに追加するための設定．
 (defadvice dired-find-file (before add-recentf)
@@ -242,7 +245,7 @@
 
 ;; dired-hacks
 (el-get-bundle 'dired-hacks)
-(el-get-bundle 'f)
+(el-get-bundle! 'f)
 (require 'dired-filter)
 (setq dired-filter-group-saved-groups
       '(("default"
@@ -259,8 +262,8 @@
 (el-get-bundle 'open-junk-file)
 (global-set-key (kbd "C-x f") 'open-junk-file)
 
-;;; R 使わない
-;; (el-get-bundle elpa:ess)
+;; ess
+;; (el-get-bundle 'elpa:ess)
 ;; (add-to-list 'load-path "~/.emacs.d/el-get/ess/lisp")
 ;; (require 'ess-site)
 
@@ -268,19 +271,15 @@
 (el-get-bundle 'elpa:yatex)
 (setq YaTeX-kanji-code nil)
 (setq YaTeX-coding-system nil)
-(add-to-list' auto-mode-alist
-              (cons "\\.tex$" 'yatex-mode))
+(add-to-list 'auto-mode-alist
+             '("\\.tex\\'" . yatex-mode))
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (setq YaTeX-fill-column 80)
-(setq YaTeX-latex-message-code 'utf-8)
-
-(el-get-bundle elpa:yatex)
-(add-to-list' auto-mode-alist
-              (cons "\\.tex$" 'yatex-mode))
-(autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
-(setq YaTeX-dvi2-command-ext-alist
-      '(("[agxk]dvi\\|dviout" . ".dvi")
-        ("ghostview\\|gv" . ".ps") ("acroread\\|[xk]pdf\\|pdfopen\\|Preview\\|TeXShop\\|Skim\\|evince\\|mupdf\\|zathura\\|okular\\|open" . ".pdf")))
+(setq YaTeX-latex-message-code nil)
+(when (eq system-type 'darwin)
+  (setq YaTeX-dvi2-command-ext-alist
+        '(("[agxk]dvi\\|dviout" . ".dvi")
+          ("ghostview\\|gv" . ".ps") ("acroread\\|[xk]pdf\\|pdfopen\\|Preview\\|TeXShop\\|Skim\\|evince\\|mupdf\\|zathura\\|okular\\|open" . ".pdf"))))
 (setq bibtex-command "pbibtex")
 
 ;; org-mode
@@ -299,11 +298,12 @@
                          ("<tab>" . (org-cycle))))
 (setq org-global-properties
       '(("Effort_ALL" . "00:10 00:20 00:30 01:00 01:30 02:00 02:30 03:00")))
-(global-set-key (kbd "C-c l") 'org-store-link)
 (define-key org-mode-map (kbd "C-,") 'other-window-or-split)
+(global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
+(add-hook 'org-mode-hook 'turn-on-font-lock)
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'org-display-inline-images)
 
@@ -312,7 +312,7 @@
 (define-key org-mode-map (kbd "C-S-n") 'org-metaright)
 (define-key org-mode-map (kbd "C-S-p") 'org-metaleft)
 
-;; agenda
+;; org-agenda
 ;; http://hpcgi1.nifty.com/spen/index.cgi?OrgMode%2fOrg%2dmode%a4%c7GTD%bc%c2%c1%a9%a1%ca%cb%dd%cc%f5%a1%cb
 (setq org-agenda-custom-commands
       '(("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
@@ -326,8 +326,7 @@
         ("w" "8 days agenda"
          ((agenda "TODO" ((org-agenda-ndays 8)
                           (org-agenda-start-day "-1")
-                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
-                          ))))))
+                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))))))))
 (setq org-agenda-columns-add-appointments-to-effort-sum t)
 (add-hook 'org-timer-set-hook 'org-clock-in)
 (add-hook 'org-timer-done-hook 'org-clock-out)
@@ -366,6 +365,27 @@
 (setq org-columns-default-format
       "%50ITEM{Task} %TODO %8EFFORT{:} %6CLOCKSUM{Total}")
 
+;; (setq org-html-validation-link nil)
+;; (setq org-latex-default-class "jsarticle")
+;; (defvar org-latex-classes nil)
+;; (setq org-latex-default-packages-alist
+;;       '(("dvipdfmx" "graphicx" t)
+;;         ("" "amsmath" t)
+;;         ("" "amssymb" t)
+;;         ("" "amsfonts" t)
+;;         ))
+;; ("jsarticle"
+;;  "\\documentclass[11pt]{jsarticle}"
+;;  ("\\section{%s}" . "\\section*{%s}")
+;;  ("\\subsection{%s}" . "\\subsection*{%s}")
+;;  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;  ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+;; (setq org-latex-pdf-process
+;;       '("platex %b"
+;;         "platex %b"
+;;         "dvipdfmx %b"))
+
 ;; babel
 (setq org-confirm-babel-evaluate nil)
 (setq org-babel-load-languages
@@ -376,26 +396,37 @@
         (gnuplot . t)
         (http . t)
         (ruby . t)
-        (python . t)))
+        (python . t)
+        (dot . t)))
+(setq org-confirm-babel-evaluate nil)
+;; ipython3 のための 再定義
+;; (defun ob-ipython--kernel-repl-cmd (name)
+;;   (list "jupyter" "console" "--existing" (format "emacs-%s.json" name)))
 (define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
 (define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
+(setq org-image-actual-width '(256))
+
 ;; ob-python
-(el-get-bundle 'gregsexton/ob-ipython)
+(el-get-bundle 'f)
+(el-get-bundle! 'gregsexton/ob-ipython)
 (autoload 'org-babel-execute:python "ob-python.el")
-(setq org-babel-python-command "python3")
+(setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
-(setq org-babel-confirm-evaluate nil)
+(setq org-babel-default-header-args:python '((:session . "my_session")))
+;; ob-sh
+(require 'ob-sh)
+;; ob-http
+;; (el-get-bundle 'ob-http)
 
-;;;###autoload
-(defun my/toggle-yatex-mode-temporarily ()
-  (interactive)
-  (cond ((not (eq major-mode 'yatex-mode))
-         (yatex-mode))
-        (t (normal-mode))))
-(global-set-key (kbd "C-c Y") 'my/toggle-yatex-mode-temporarily)
-
-(setq org-latex-with-hyperref nil)
-(setq org-latex-pdf-process '("platex %f" "dvipdfmx %b.dvi"))
+;; ;;;###autoload
+;; (defun my/toggle-yatex-mode-temporarily ()
+;;   (interactive)
+;;   (cond ((not (eq major-mode 'yatex-mode))
+;;          (yatex-mode))
+;;         (t (normal-mode))))
+;; (global-set-key (kbd "C-c Y") 'my/toggle-yatex-mode-temporarily)
+;; (setq org-latex-with-hyperref nil)
+;; (setq org-latex-pdf-process '("platex %f" "dvipdfmx %b.dvi"))
 
 ;; org-external
 (setq org-file-apps '(("\\.rd\\'" . emacs)
@@ -405,37 +436,11 @@
                       ("\\.x?html?\\'" . default)))
 (setq org-link-file-path-type 'relative)
 
-(setq org-html-validation-link nil)
-(setq org-latex-default-packages-alist '(("AUTO" "inputenc" t)
-                                         ("T1" "fontenc" t)
-                                         ("" "fixltx2e" nil)
-                                         ("dvipdfmx" "graphicx" t)
-                                         ("" "longtable" nil)
-                                         ("" "float" nil)
-                                         ("" "wrapfig" nil)
-                                         ("" "rotating" nil)
-                                         ("normalem" "ulem" t)
-                                         ("" "amsmath" t)
-                                         ("" "textcomp" t)
-                                         ("" "marvosym" t)
-                                         ("" "wasysym" t)
-                                         ("" "amssymb" t)
-                                         ("" "hyperref" nil)
-                                         "\\tolerance=1000"))
-(setq org-latex-default-class "jsarticle")
-;; ("jsarticle"
-;;  "\\documentclass[11pt]{jsarticle}"
-;;  ("\\section{%s}" . "\\section*{%s}")
-;;  ("\\subsection{%s}" . "\\subsection*{%s}")
-;;  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;;  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;;  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+;; org-archive
+(setq org-archive-location
+      (concat "%s_archive_"
+              (format-time-string "%Y::" (current-time))))
 
-
-(setq org-latex-pdf-process
-      '("platex %b"
-        "platex %b"
-        "dvipdfmx %b"))
 
 ;; smartparens
 (el-get-bundle smartparens)
@@ -445,7 +450,9 @@
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 (sp-use-paredit-bindings)
+(electric-pair-mode nil)
 
+;; expand
 (global-set-key (kbd "C-;") 'hippie-expand)
 (setq hippie-expand-try-functions-list
       '(try-complete-file-name-partially
@@ -465,35 +472,36 @@
 (setq scroll-step 1)
 (setq next-screen-context-lines 20)
 
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/howm/")
+;; howm
 (global-unset-key (kbd "C-q"))
 (setq howm-prefix "\C-q"
       howm-view-title-header "*"
       howm-menu-lang 'ja
       howm-keyword-case-fold-search t)
-(el-get-bundle! 'howm) ; '上との順序，重要なので変更しない
-(setq howm-list-recent-title t                       ;; 「最近のメモ」一覧時にタイトル表示
-      howm-list-all-title t                          ;; 全メモ一覧時にタイトル表示
-      howm-menu-expiry-hours 2                       ;; メニューを 2 時間キャッシュ
-      howm-menu-schedule-days-before 10              ;; 10 日前から
-      howm-menu-schedule-days 7                      ;; 3 日後まで
-      howm-file-name-format "%Y/%m/%d-%H%M%S.org" ;; howm のファイル名
-      howm-view-grep-parse-line
-      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$"
-      howm-excluded-file-regexp
-      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$"
-      howm-menu-refresh-after-save nil
-      howm-view-summary-persistent nil
-      howm-template "* %cursor\n"
-      howm-template-file-format "[[%s]]"
-      howm-view-use-grep t
-      howm-menu-recent-num 10
-      howm-list-recent-days 20)
+(el-get-bundle! 'howm)                  ; 上との順序，重要なので変更しない
+(setq howm-list-recent-title t)
+(setq howm-list-all-title t)
+(setq howm-menu-expiry-hours 2)
+(setq howm-menu-schedule-days-before 10)
+(setq howm-menu-schedule-days 7)
+(setq howm-file-name-format "%Y/%m/%d-%H%M%S.org")
+(setq howm-view-grep-parse-line
+      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
+(setq howm-excluded-file-regexp
+      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$\\|\\.h5$")
+(setq howm-menu-refresh-after-save nil)
+(setq howm-view-summary-persistent nil)
+(setq howm-template "* %cursor\n")
+(setq howm-template-file-format "[[%s]]")
+(setq howm-view-use-grep t)
+(setq howm-menu-recent-num 10)
+(setq howm-list-recent-days 20)
+(add-to-list 'auto-mode-alist '("\\.howm$" . org-mode))
 (add-hook 'org-mode-hook 'howm-mode)
 (set-face-attribute 'howm-mode-title-face nil :foreground nil)
 (set-face-attribute 'howm-reminder-today-face nil :foreground nil :background "#2d37aa" :box nil)
 (set-face-attribute 'howm-reminder-tomorrow-face nil :foreground nil :background "#2d4900" :box nil)
-(setq howm-view-grep-file-stdin-option nil) ;なぜか必要
+(setq howm-view-grep-file-stdin-option nil) ;なぜか必要?
 
 ;; face
 (custom-set-faces
@@ -518,13 +526,13 @@
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
-;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
-;; (define-key yas-minor-mode-map (kbd "TAB") nil)
-;; (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
+(el-get-bundle helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 ;; popwin
 (el-get-bundle! popwin)
-(popwin-mode)
+(popwin-mode 1)
 
 ;; google-translate
 (el-get-bundle! 'google-translate)
@@ -553,7 +561,8 @@
 (el-get-bundle 'jaword)
 (jaword-mode)
 
-(set-default 'c-hungry-delete-key t)
+;; c言語
+(setq-default c-hungry-delete-key nil)
 (add-hook 'c++-mode-hook 'electric-indent-mode)
 (add-hook 'c-mode-hook 'electric-indent-mode)
 ;;;###autoload 
@@ -579,6 +588,7 @@
 (global-set-key (kbd "C-o") 'add-new-line-below)
 (global-set-key (kbd "M-o") 'add-new-line-above)
 
+;; folding
 (require 'hideshow)
 (add-hook 'html-mode-hook 'hs-minor-mode)
 (add-hook 'lisp-mode-hook 'hs-minor-mode)
@@ -592,19 +602,22 @@
 (define-key hs-minor-mode-map (kbd "C-M-~") 'hs-show-all)
 (define-key hs-minor-mode-map (kbd "C-l ^") '(lambda () (interactive) (hs-hide-level 2)))
 
-; (el-get-bundle 'emacs-async)
+;; external program utility
+(defvar my/open-command nil)
+(if (eq system-type 'darwin)
+    (setq my/open-command "open")
+  (setq my/open-command "nautilus"))
 ;;;###autoload
 (defun start-nautilus ()
   (interactive)
   (let ((dd (expand-file-name default-directory)))
-    (async-start-process "Finder" "open" 'ignore dd)))
+    (async-start-process "Filer" my/open-command 'ignore dd)))
 (global-set-key (kbd "C-¥ e") 'start-nautilus)
 ;;;###autoload
 (defun start-gnome-terminal ()
   (interactive)
   (let ((dd (expand-file-name default-directory)))
     (async-start-process "terminal" "open" 'ignore "-a" "Terminal" dd)))
-
 (global-set-key (kbd "C-¥ c") 'start-gnome-terminal)
 (global-set-key (kbd "C-¥ E") 'eshell)
 (global-set-key (kbd "C-¥ M-e") 'my/popup-eshell)
@@ -628,13 +641,9 @@
 
 ;; window
 (winner-mode 1)
-;; (smartrep-define-key
-;;     global-map "C-c" '(("<left>" . (winner-undo))
-;;                        ("<right>" . (winner-redo))))
 
 ;; multiple-cursors
-(el-get-bundle multiple-cursors)
-;; (require 'multiple-cursors)
+(el-get-bundle! multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -648,9 +657,6 @@
 (global-set-key (kbd "C-S-c C-S-n") 'mc/skip-to-next-like-this)
 (global-set-key (kbd "C-S-c C-S-e") 'mc/mark-more-like-this-extended)
 
-;; mouse
-(mouse-avoidance-mode 'exile)
-
 ;; calfw
 (el-get-bundle 'calfw)
 (require 'calfw-org)
@@ -659,6 +665,7 @@
 ;; magit
 (el-get-bundle 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
+(setq magit-revert-buffers t)
 
 ;;;###autoload
 (defun my/copy-current-file-name ()
@@ -677,13 +684,25 @@
 
 ;; openwith
 (el-get-bundle 'openwith)
-(setq openwith-associations
-  '(("\\.pdf\\'" "open" (file))
-    ("\\.xlsx\\'" "open" (file))))
+(if (eq system-type 'darwin)
+    (setq openwith-associations
+          '(("\\.pdf\\'" "open" (file))
+            ("\\.xlsx\\'" "open" (file))
+            ("\\.eps\\'" "open" (file))))
+  '(("\\.pdf\\'" "evince" (file))))
+
+;; ;; number
+;; (el-get-bundle 'number)
+;; (global-set-key (kbd "C-c C-+") 'number/add)
+;; (global-set-key (kbd "C-c C--") 'number/sub)
+;; (global-set-key (kbd "C-c C-*") 'number/multiply)
+;; (global-set-key (kbd "C-c C-/") 'number/divide)
+;; (global-set-key (kbd "C-c C-0") 'number/pad)
+;; (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
 (setq backup-directory-alist
-             `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
+      `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
 
 ;;; python
 (require 'python)
@@ -691,9 +710,8 @@
 (defun python-shell-send-line()
   "send current line to python shell."
   (interactive)
-  (let* ((clbeg (line-beginning-position))
-         (clend (line-end-position)))
-    (python-shell-send-region clbeg clend)))
+  (python-shell-send-region (line-beginning-position)
+                            (line-end-position)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq python-shell-interpreter "python")
@@ -702,10 +720,11 @@
 (setq indent-level 4)
 (setq python-indent 4)
 (setq tab-width 4)
+(setq python-indent-guess-indent-offset nil)
 
 ;; jedi
 (el-get-bundle jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 (setq jedi:complete-on-dot t)
 
@@ -732,11 +751,11 @@
     global-map "C-l" '(("[" . (backward-paragraph))
                        ("]" . (forward-paragraph))))
 
-
+;; auto-complete
 (el-get-bundle auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
-(global-auto-complete-mode)
+(global-auto-complete-mode 1)
 (add-to-list 'ac-modes 'YaTeX-mode)
 (setq ac-auto-start 4
       ac-auto-show-menu 0.8
@@ -752,7 +771,10 @@
         (remove-duplicates
          (mapcan #'yas--table-all-keys (yas--get-snippet-tables)))))
 
-;; (load "~/.emacs.d/site-lisp/27_org.el")
+;; tramp
+(require 'tramp)
+(setq tramp-default-method "scp")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -802,7 +824,6 @@
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 
-
 ;;; フォント周り
 (set-face-attribute 'default nil :family "Menlo" :height 140)
 (set-fontset-font t 'japanese-jisx0208
@@ -815,30 +836,41 @@
 
 (global-set-key (kbd "M-¥") 'delete-horizontal-space)
 
-(setq ispell-program-name "aspell")
-(put 'dired-find-alternate-file 'disabled nil)
-
 ;; tramp
 (require 'tramp)
 (setq tramp-default-method "scp")
 
 ;; mac / customize off
-(global-unset-key (kbd "s-,"))
+(when (eq system-type 'darwin)
+  (global-unset-key (kbd "s-,")))
 
 ;; path config これがないと，platexが実行できなかったりします．
 (el-get-bundle exec-path-from-shell)
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
 
-;; restart-eamcs
-(el-get-bundle 'restart-emacs)
-
 ;; auto-insert
 (auto-insert-mode)
 (setq auto-insert-directory "~/.emacs.d/template/")
 (setq auto-insert-query nil)
 (define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
-(define-auto-insert '("\\.tex$" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
+(define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
 
+;; dokuwiki
+(el-get-bundle ox-wk :type git :url "git@github.com:w-vi/ox-wk.el")
+
+(el-get-bundle org-textile :type git :url "git@github.com:yashi/org-textile")
+;;;###autoload
+(defun org-textile-example-block(example-block contents info)
+  (let ((value (org-element-property :value example-block)))
+    (concat "<pre>" value "\n</pre>")))
+
+;; key-bindings 2
+(global-set-key (kbd "C-q M-i") 'quoted-insert)
+(global-set-key (kbd "C-x C-r") 'eval-region)
+
+;; private
 (load-file "~/.emacs.d/private.el")
 
+
+(put 'dired-find-alternate-file 'disabled nil)
