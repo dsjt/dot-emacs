@@ -258,7 +258,10 @@
          ("Org"
           (extension . "org"))
          ("Archives"
-          (extension "zip" "rar" "gz" "bz2" "tar")))))
+          (extension "zip" "rar" "gz" "bz2" "tar"))
+         ("python"
+          (extension "py")))))
+(dired-filter-group-mode 1)
 
 ;; junk-file
 (el-get-bundle 'open-junk-file)
