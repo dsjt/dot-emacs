@@ -510,9 +510,6 @@
  '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
  '(outline-3 ((t (:foreground "#AFF")))))
 
-;; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
-(set-face-attribute 'default nil :family "IPAGothic" :height 120)
-
 ;; yasnippet
 (el-get-bundle yasnippet)
 (yas-global-mode 1)
@@ -779,13 +776,13 @@
 (setq tramp-default-method "scp")
 
 ;;; フォント周り
+;; (set-face-attribute 'default nil :family "IPAGothic" :height 150)
 (set-face-attribute 'default nil :family "Menlo" :height 140)
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
                              :size 16))
 (add-to-list 'face-font-rescale-alist
              '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
-
 (global-set-key (kbd "M-¥") 'delete-horizontal-space)
 
 
