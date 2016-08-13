@@ -822,10 +822,13 @@
 ;; shceme
 (setq process-coding-system-alist
       (cons '("gosh" utf-8 . utf-8) process-coding-system-alist))
-(setq scheme-program-name "/usr/bin/gosh -i")
+(if (eq system-type 'darwin)
+    (setq scheme-program-name "/usr/local/bin/gosh -i")
+  (setq scheme-program-name "/usr/bin/gosh -i"))
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-(define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)
+(add-hook 'cmuscheme-load-map
+          '(lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)))
 
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
