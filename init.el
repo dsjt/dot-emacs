@@ -433,9 +433,14 @@
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+(sp-local-pair 'scheme-mode "'" nil :actions nil)
+(sp-local-pair 'inferior-scheme-mode "'" nil :actions nil)
 (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 (sp-use-paredit-bindings)
 (electric-pair-mode nil)
+
+;; latex in org-mode
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
 ;; expand
 (global-set-key (kbd "C-;") 'hippie-expand)
