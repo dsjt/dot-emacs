@@ -812,7 +812,7 @@
     (concat "<pre>" value "\n</pre>")))
 
 ;; clang-format
-(require 'clang-format)
+(el-get-bundle 'clang-format)
 (setq clang-format-executable "clang-format-3.5")
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
 
