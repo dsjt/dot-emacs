@@ -236,8 +236,8 @@
       delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
   (setq trash-directory "~/.Trash"))
+(put 'dired-find-alternate-file 'disabled nil)
 
-(global-dired-hide-details-mode -1)
 ;; diredで開いたpdfをrecentfに追加するための設定．
 (defadvice dired-find-file (before add-recentf)
   (let ((file (dired-filename-at-point)))
@@ -261,7 +261,18 @@
           (extension "zip" "rar" "gz" "bz2" "tar"))
          ("python"
           (extension "py")))))
-(dired-filter-group-mode 1)
+(add-hook 'dired-mode-hook '(lambda () (dired-filter-group-mode 1)))
+
+;; my/dired-config
+;;;###autoload
+(defun my/dired-config()
+  ;; (dired-hide-details-mode -1)
+  (dired-filter-group-mode 1))
+(add-hook 'dired-mode-hook 'my/dired-config)
+
+(setq ls-lisp-use-insert-directory-program nil)
+(require 'ls-lisp)
+
 
 ;; junk-file
 (el-get-bundle 'open-junk-file)
@@ -399,7 +410,9 @@
 (autoload 'org-babel-execute:python "ob-python.el")
 (setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
-(setq org-babel-default-header-args:python '((:session . "my_session")))
+(setq org-babel-default-header-args:python '((:session . "my_session")
+                                             (:results . "none")
+                                             (:tangle . "yes")))
 ;; ob-sh
 (require 'ob-sh)
 ;; ob-http
@@ -436,8 +449,11 @@
 (sp-local-pair 'scheme-mode "'" nil :actions nil)
 (sp-local-pair 'inferior-scheme-mode "'" nil :actions nil)
 (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
+(sp-local-pair 'emacs-lisp-mode "\"" nil :actions nil)
+(sp-local-pair 'org-mode "\"" nil :actions nil)
+(sp-local-pair 'org-mode "$" "$")
 (sp-use-paredit-bindings)
-(electric-pair-mode nil)
+;; (electric-pair-mode t)
 
 ;; latex in org-mode
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
@@ -722,6 +738,14 @@
 (setq tab-width 4)
 (setq python-indent-guess-indent-offset nil)
 
+;; pyenv
+;; 現状だめ．端末からの起動でなければ，anacondaのpythonを起動できない．
+;; (setenv "PYENV_ROOT" "/usr/local/var/pyenv")
+;; eval "$(pyenv init -)"
+(el-get-bundle 'proofit404/pyenv-mode)
+(el-get-bundle 'pythonic)
+(pyenv-mode)
+
 ;; jedi
 (el-get-bundle jedi)
 ;; (add-hook 'python-mode-hook 'jedi:setup)
@@ -837,7 +861,6 @@
 ;; private
 (load-file "~/.emacs.d/private.el")
 
-(put 'dired-find-alternate-file 'disabled nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
