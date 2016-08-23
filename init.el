@@ -515,7 +515,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cursor ((t (:background "highlightColor"))))
+ ;; '(cursor ((t (:background "highlightcolor"))))
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
@@ -532,9 +532,9 @@
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
-(el-get-bundle helm-c-yasnippet)
-(setq helm-yas-space-match-any-greedy t)
-(global-set-key (kbd "C-x i i") 'helm-yas-complete)
+;; (el-get-bundle helm-c-yasnippet)
+;; (setq helm-yas-space-match-any-greedy t)
+;; (global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 ;; popwin
 (el-get-bundle! popwin)
@@ -802,7 +802,8 @@
 (setq scheme-program-name "/usr/bin/gosh -i")
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-(define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)
+(setq cmuscheme-load-hook
+      '((lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme))))
 
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
