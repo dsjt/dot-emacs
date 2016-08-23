@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: %matplotlib_inline
+# key: %mat
+# --
+%matplotlib inline

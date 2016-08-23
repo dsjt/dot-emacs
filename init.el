@@ -236,7 +236,8 @@
       delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
   (setq trash-directory "~/.Trash"))
-(global-dired-hide-details-mode -1)
+(put 'dired-find-alternate-file 'disabled nil)
+
 ;; diredで開いたpdfをrecentfに追加するための設定．
 (defadvice dired-find-file (before add-recentf)
   (let ((file (dired-filename-at-point)))
@@ -257,7 +258,21 @@
          ("Org"
           (extension . "org"))
          ("Archives"
-          (extension "zip" "rar" "gz" "bz2" "tar")))))
+          (extension "zip" "rar" "gz" "bz2" "tar"))
+         ("python"
+          (extension "py")))))
+(add-hook 'dired-mode-hook '(lambda () (dired-filter-group-mode 1)))
+
+;; my/dired-config
+;;;###autoload
+(defun my/dired-config()
+  ;; (dired-hide-details-mode -1)
+  (dired-filter-group-mode 1))
+(add-hook 'dired-mode-hook 'my/dired-config)
+
+(setq ls-lisp-use-insert-directory-program nil)
+(require 'ls-lisp)
+
 
 ;; junk-file
 (el-get-bundle 'open-junk-file)
@@ -368,30 +383,6 @@
 
 ;; export
 ;; org->latex
-;; (setq org-latex-default-class "jsarticle")
-;; (defvar org-latex-classes nil)
-;; (setq org-latex-default-packages-alist
-;;       '(("dvipdfmx" "graphicx" t)
-;;         ("" "amsmath" t)
-;;         ("" "amssymb" t)
-;;         ("" "amsfonts" t)
-;;         ))
-;; (add-to-list 'org-latex-classes 
-;;       '("jsarticle" "\\documentclass[a4paper,12pt,titlepage]{jsarticle}"))
-;; (setq org-latex-with-hyperref nil)
-;; (setq org-latex-pdf-process '("platex %f" "dvipdfmx %b.dvi"))
-
-;; org->html
-;; (setq org-html-with-latex 'mathjax)
-;; (setq org-html-with-latex 'dvipng)
-;; (setq org-html-mathjax-options '((path "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML") (scale "100") (align "center") (indent "2em") (mathml nil)))
-;; (setq org-export-default-language "ja")
-;; (setq org-html-postamble-format
-;;       '(("ja" "<!-- <p class=\"author\">Author: %a (%e)</p> -->
-;; <p class=\"date\">Date: %T</p>
-;; <p class=\"creator\">%c</p>
-;; <p class=\"validation\">%v</p>")))
-;; (setq org-html-postamble t)
 
 ;; babel
 (setq org-confirm-babel-evaluate nil)
@@ -419,7 +410,9 @@
 (autoload 'org-babel-execute:python "ob-python.el")
 (setq org-babel-python-command "python")
 (setq org-src-preserve-indentation t)
-(setq org-babel-default-header-args:python '((:session . "my_session")))
+(setq org-babel-default-header-args:python '((:session . "my_session")
+                                             (:results . "none")
+                                             (:tangle . "yes")))
 ;; ob-sh
 (require 'ob-sh)
 ;; ob-http
@@ -448,15 +441,22 @@
       (concat "%s_archive_"
               (format-time-string "%Y::" (current-time))))
 
-;; smartparen
 (el-get-bundle 'smartparens)
 (smartparens-global-mode 1)
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
 (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+(sp-local-pair 'scheme-mode "'" nil :actions nil)
+(sp-local-pair 'inferior-scheme-mode "'" nil :actions nil)
 (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
+(sp-local-pair 'emacs-lisp-mode "\"" nil :actions nil)
+(sp-local-pair 'org-mode "\"" nil :actions nil)
+(sp-local-pair 'org-mode "$" "$")
 (sp-use-paredit-bindings)
-(electric-pair-mode nil)
+;; (electric-pair-mode t)
+
+;; latex in org-mode
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
 ;; expand
 (global-set-key (kbd "C-;") 'hippie-expand)
@@ -519,12 +519,12 @@
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
- '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 3 :color "dim gray" :style released-button)))))
- '(org-agenda-done ((t (:foreground "dark gray" :strike-through t))))
- '(org-done ((t (:foreground "black" :strike-through "black" :weight bold))))
- '(org-todo ((t (:foreground "deep sky blue" :weight bold)))))
-;; height は、30の倍数でないと全角半角にぶれ．org-tableで不便
-(set-face-attribute 'default nil :family "IPAGothic" :height 120)
+ '(org-todo ((t (:foreground "deep sky blue" :weight bold))))
+ '(org-done ((t (:foreground "disabledControlTextColor" :strike-through "black" :weight bold))))
+ '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))))
+ '(org-agenda-done ((t (:foreground "disabledControlTextColor" :strike-through t))))
+ '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
+ '(outline-3 ((t (:foreground "#AFF")))))
 
 ;; yasnippet
 (el-get-bundle yasnippet)
@@ -618,6 +618,7 @@
   (interactive)
   (let ((dd (expand-file-name default-directory)))
     (async-start-process "Filer" my/open-command 'ignore dd)))
+(global-set-key (kbd "C-¥ e") 'start-nautilus)
 (global-set-key (kbd "C-\\ e") 'start-nautilus)
 ;;;###autoload
 (defun start-gnome-terminal ()
@@ -628,12 +629,21 @@
 (global-set-key (kbd "C-\\ E") 'eshell)
 (global-set-key (kbd "C-\\ M-e") 'my/popup-eshell)
 ;;;###autoload
+(defun start-mac-terminal ()
+  (interactive)
+  (let ((dd (expand-file-name default-directory)))
+    (async-start-process "terminal" "open" 'ignore "-a" "Terminal" dd)))
+(global-set-key (kbd "C-¥ c") 'start-mac-terminal)
+(global-set-key (kbd "C-¥ E") 'eshell)
+(global-set-key (kbd "C-¥ M-e") 'my/popup-eshell)
+;;;###autoload
 (defun my/popup-eshell (arg)
   (interactive "p")
   (let (eb)
     (save-window-excursion
       (setq eb (eshell arg)))
     (popwin:popup-buffer-tail eb)))
+(global-set-key (kbd "C-¥ 9") 'popwin:stick-popup-window)
 (global-set-key (kbd "C-\\ 9") 'popwin:stick-popup-window)
 
 ;; inhibit-splash-screen
@@ -728,6 +738,14 @@
 (setq tab-width 4)
 (setq python-indent-guess-indent-offset nil)
 
+;; pyenv
+;; 現状だめ．端末からの起動でなければ，anacondaのpythonを起動できない．
+;; (setenv "PYENV_ROOT" "/usr/local/var/pyenv")
+;; eval "$(pyenv init -)"
+(el-get-bundle 'proofit404/pyenv-mode)
+(el-get-bundle 'pythonic)
+(pyenv-mode)
+
 ;; jedi
 (el-get-bundle jedi)
 ;; (add-hook 'python-mode-hook 'jedi:setup)
@@ -752,7 +770,7 @@
 (el-get-bundle! 'avy)
 (global-set-key (kbd "C-M-j") 'avy-goto-char)
 (el-get-bundle 'ace-jump-mode)
-(load-file "~/.emacs.d/site-lisp/ace-pinyin-myconf.el")
+;; (load-file "~/.emacs.d/site-lisp/ace-pinyin-myconf.el")
 (smartrep-define-key
     global-map "C-l" '(("[" . (backward-paragraph))
                        ("]" . (forward-paragraph))))
@@ -781,6 +799,26 @@
 (require 'tramp)
 (setq tramp-default-method "scp")
 
+;;; フォント周り
+;; (set-face-attribute 'default nil :family "IPAGothic" :height 150)
+(set-face-attribute 'default nil :family "Menlo" :height 140)
+(set-fontset-font t 'japanese-jisx0208
+                  (font-spec :family "Hiragino Kaku Gothic ProN"
+                             :size 16))
+(add-to-list 'face-font-rescale-alist
+             '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
+(global-set-key (kbd "M-¥") 'delete-horizontal-space)
+
+
+;; mac / customize off
+(when (eq system-type 'darwin)
+  (global-unset-key (kbd "s-,")))
+
+;; path config これがないと，platexが実行できなかったりします．
+(el-get-bundle exec-path-from-shell)
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
+
 ;; auto-insert
 (auto-insert-mode)
 (setq auto-insert-directory "~/.emacs.d/template/")
@@ -788,8 +826,17 @@
 (define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
 (define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
 
+;; dokuwiki
+(el-get-bundle ox-wk :type git :url "git@github.com:w-vi/ox-wk.el")
+
+(el-get-bundle org-textile :type git :url "git@github.com:yashi/org-textile")
+;;;###autoload
+(defun org-textile-example-block(example-block contents info)
+  (let ((value (org-element-property :value example-block)))
+    (concat "<pre>" value "\n</pre>")))
+
 ;; clang-format
-(require 'clang-format)
+(el-get-bundle 'clang-format)
 (setq clang-format-executable "clang-format-3.5")
 (set-default 'clang-format-style "{BasedOnStyle: Google, IndentWidth: 4, Standard: C++11}")
 
@@ -799,10 +846,12 @@
 ;; shceme
 (setq process-coding-system-alist
       (cons '("gosh" utf-8 . utf-8) process-coding-system-alist))
-(setq scheme-program-name "/usr/bin/gosh -i")
+(if (eq system-type 'darwin)
+    (setq scheme-program-name "/usr/local/bin/gosh -i")
+  (setq scheme-program-name "/usr/bin/gosh -i"))
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-(setq cmuscheme-load-hook
+(add-hook cmuscheme-load-hook
       '((lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme))))
 
 ;; key-bindings 2
@@ -811,6 +860,8 @@
 
 ;; private
 (load-file "~/.emacs.d/private.el")
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
