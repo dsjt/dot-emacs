@@ -452,6 +452,7 @@
 (sp-local-pair 'emacs-lisp-mode "\"" nil :actions nil)
 (sp-local-pair 'org-mode "\"" nil :actions nil)
 (sp-local-pair 'org-mode "$" "$")
+(sp-local-pair 'org-mode "\"" "\"")
 (sp-use-paredit-bindings)
 ;; (electric-pair-mode t)
 
@@ -742,9 +743,10 @@
 ;; 現状だめ．端末からの起動でなければ，anacondaのpythonを起動できない．
 ;; (setenv "PYENV_ROOT" "/usr/local/var/pyenv")
 ;; eval "$(pyenv init -)"
-(el-get-bundle 'proofit404/pyenv-mode)
-(el-get-bundle 'pythonic)
-(pyenv-mode)
+;; (el-get-bundle 'proofit404/pyenv-mode)
+;; (el-get-bundle 'dash)
+;; (el-get-bundle 'pythonic)
+;; (pyenv-mode)
 
 ;; jedi
 (el-get-bundle jedi)
@@ -800,8 +802,9 @@
 (setq tramp-default-method "scp")
 
 ;;; フォント周り
-;; (set-face-attribute 'default nil :family "IPAGothic" :height 150)
-(set-face-attribute 'default nil :family "Menlo" :height 140)
+(if (eq system-type 'darwin)
+    (set-face-attribute 'default nil :family "Menlo" :height 140)
+  (set-face-attribute 'default nil :family "IPAGothic" :height 120)(set-face-attribute 'default nil :family "IPAGothic" :height 120))
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
                              :size 16))
@@ -851,8 +854,15 @@
   (setq scheme-program-name "/usr/bin/gosh -i"))
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-(add-hook cmuscheme-load-hook
+(setq cmuscheme-load-hook
       '((lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme))))
+
+;; (el-get-bundle 'cedet)
+
+(el-get-bundle 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
 
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
