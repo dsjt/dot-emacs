@@ -3,6 +3,6 @@
 # key: python
 # binding: direct-keybinding
 # --
-#+begin_src python :session
+#+begin_src python
 $0
 #+end_src
