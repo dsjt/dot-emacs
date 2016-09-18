@@ -336,8 +336,9 @@
          ((agenda "TODO" ((org-agenda-ndays 4)
                           (org-agenda-start-day "-1")
                           (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
-                          (org-agenda-show-log t)
-                          (org-agenda-log-mode-items '(closed state))))
+                          ;; (org-agenda-show-log t)
+                          ;; (org-agenda-log-mode-items '(closed state))
+                          ))
           (tags "buckets")))
         ("w" "8 days agenda"
          ((agenda "TODO" ((org-agenda-ndays 8)
@@ -399,6 +400,7 @@
 (setq org-confirm-babel-evaluate nil)
 (define-key org-mode-map (kbd "C-c C-7") 'org-edit-special)
 (define-key org-src-mode-map (kbd "C-c C-7") 'org-edit-src-exit)
+(setq org-src-window-setup 'other-window)
 (setq org-image-actual-width '(256))
 
 ;; ob-python
@@ -595,18 +597,33 @@
 (global-set-key (kbd "M-o") 'add-new-line-above)
 
 ;; folding
-(require 'hideshow)
-(add-hook 'html-mode-hook 'hs-minor-mode)
-(add-hook 'lisp-mode-hook 'hs-minor-mode)
-(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
-(add-hook 'c-mode-common-hook 'hs-minor-mode)
-(add-hook 'latex-mode-hook 'hs-minor-mode)
-(add-hook 'YaTeX-mode-hook 'hs-minor-mode)
-(add-hook 'python-mode-hook 'hs-minor-mode)
-(define-key hs-minor-mode-map (kbd "C-^") 'hs-toggle-hiding)
-(define-key hs-minor-mode-map (kbd "C-M-^") 'hs-hide-all)
-(define-key hs-minor-mode-map (kbd "C-M-~") 'hs-show-all)
-(define-key hs-minor-mode-map (kbd "C-l ^") '(lambda () (interactive) (hs-hide-level 2)))
+;; (require 'hideshow)
+;; (add-hook 'html-mode-hook 'hs-minor-mode)
+;; (add-hook 'lisp-mode-hook 'hs-minor-mode)
+;; (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+;; (add-hook 'c-mode-common-hook 'hs-minor-mode)
+;; (add-hook 'latex-mode-hook 'hs-minor-mode)
+;; (add-hook 'YaTeX-mode-hook 'hs-minor-mode)
+;; (add-hook 'python-mode-hook 'hs-minor-mode)
+;; (define-key hs-minor-mode-map (kbd "C-^") 'hs-toggle-hiding)
+;; (define-key hs-minor-mode-map (kbd "C-M-^") 'hs-hide-all)
+;; (define-key hs-minor-mode-map (kbd "C-M-~") 'hs-show-all)
+;; (define-key hs-minor-mode-map (kbd "C-l ^") '(lambda () (interactive) (hs-hide-level 2)))
+(el-get-bundle 'yafolding)
+(define-key yafolding-mode-map (kbd "C-^") #'yafolding-toggle-element)
+(define-key yafolding-mode-map (kbd "C-M-^") #'yafolding-toggle-all)
+(add-hook 'html-mode-hook 'yafolding-mode)
+(add-hook 'lisp-mode-hook 'yafolding-mode)
+(add-hook 'emacs-lisp-mode-hook 'yafolding-mode)
+(add-hook 'c-mode-common-hook 'yafolding-mode)
+(add-hook 'latex-mode-hook 'yafolding-mode)
+(add-hook 'YaTeX-mode-hook 'yafolding-mode)
+(add-hook 'python-mode-hook 'yafolding-mode)
+(setq yafolding-show-fringe-marks t)
+;; (el-get-bundle 'gregsexton/origami.el)
+;; (global-origami-mode)
+;; (define-key origami-mode-map (kbd "C-^") #'origami-toggle-node)
+;; (define-key origami-mode-map (kbd "C-M-^") #'origami-toggle-all-nodes)
 
 ;; external program utility
 (defvar my/open-command nil)
@@ -717,8 +734,24 @@
 ;; (global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
-(setq backup-directory-alist
-      `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
+(let ((target-dir (expand-file-name "~/"))
+      (dest-dir (expand-file-name "~/.Trash/")))
+
+  ;; 自動保存ファイル(#*#)の作成先変更
+  (add-to-list 'auto-save-file-name-transforms
+               `(,(concat target-dir "\\([^/]*/\\)*\\([^/]*\\)$")
+                 ,(concat dest-dir "\\2")
+                 t))
+
+  ;; バックアップファイル(*~)の作成先変更
+  (add-to-list 'backup-directory-alist (cons target-dir dest-dir))
+
+  ;; 自動保存リスト(.saves-<PID>-<HOSTNAME>)の作成先変更
+  (setq auto-save-list-file-prefix (expand-file-name ".saves-" dest-dir)))
+;; (setq backup-directory-alist
+;;       `(("\\.*") . ,(expand-file-name "~/.emacs.d/backup/")))
+;; (add-to-list 'backup-directory-alist
+;;              (cons (expand-file-name "~/") (expand-file-name "~/.Trash/")))
 
 ;;; python
 (require 'python)
@@ -729,7 +762,6 @@
   (python-shell-send-region (line-beginning-position)
                             (line-end-position)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq python-shell-interpreter "python")
 (setq python-shell-interpreter-args "-i")
 (setq indent-tabs-mode nil)
@@ -737,14 +769,20 @@
 (setq python-indent 4)
 (setq tab-width 4)
 (setq python-indent-guess-indent-offset nil)
+;; 他のところでエラーがでるかもしれない.
+;; run-python で日本語を通すために必要
+(setenv "LANG" "ja_JP.UTF-8")
+(setenv "LC_ALL" "ja_JP.UTF-8")
+(setenv "LC_CTYPE" "ja_JP.UTF-8")
+
 
 ;; pyenv
 ;; 現状だめ．端末からの起動でなければ，anacondaのpythonを起動できない．
 ;; (setenv "PYENV_ROOT" "/usr/local/var/pyenv")
 ;; eval "$(pyenv init -)"
-(el-get-bundle 'proofit404/pyenv-mode)
-(el-get-bundle 'pythonic)
-(pyenv-mode)
+;; (el-get-bundle 'proofit404/pyenv-mode)
+;; (el-get-bundle 'pythonic)
+;; (pyenv-mode)
 
 ;; jedi
 (el-get-bundle jedi)
@@ -755,6 +793,10 @@
 ;; py-autopep8
 (el-get-bundle py-autopep8)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+;; py-autopep8 は 自分でいじりました. (pop kill-ring) を抜きました.
+;; これがあると,保存した際,kill-ringが消えます.
+;; el-get-updateすると,元に戻ってしまいます.極力しないこと.
+;; してしまい,症状が出てくる場合は,(pop kill-ring)を削除すること
 
 ;; quickrun
 (el-get-bundle! 'quickrun)
@@ -800,7 +842,7 @@
 (setq tramp-default-method "scp")
 
 ;;; フォント周り
-;; (set-face-attribute 'default nil :family "IPAGothic" :height 150)
+;; (set-face-attribute 'default nil :family "IPAGothic" :height 160)
 (set-face-attribute 'default nil :family "Menlo" :height 140)
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
@@ -854,6 +896,9 @@
 (add-hook 'cmuscheme-load-map
           '(lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)))
 
+;; (el-get-bundle 'peterwang/folding.el :features folding)
+;; (folding-mode-add-find-file-hook)
+
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
 (global-set-key (kbd "C-x C-r") 'eval-region)
@@ -861,11 +906,11 @@
 ;; private
 (load-file "~/.emacs.d/private.el")
 
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
 
