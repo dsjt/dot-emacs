@@ -454,6 +454,7 @@
 (sp-local-pair 'emacs-lisp-mode "\"" nil :actions nil)
 (sp-local-pair 'org-mode "\"" nil :actions nil)
 (sp-local-pair 'org-mode "$" "$")
+(sp-local-pair 'org-mode "\"" "\"")
 (sp-use-paredit-bindings)
 ;; (electric-pair-mode t)
 
@@ -517,7 +518,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cursor ((t (:background "highlightColor"))))
+ ;; '(cursor ((t (:background "highlightcolor"))))
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
@@ -534,9 +535,9 @@
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
-(el-get-bundle helm-c-yasnippet)
-(setq helm-yas-space-match-any-greedy t)
-(global-set-key (kbd "C-x i i") 'helm-yas-complete)
+;; (el-get-bundle helm-c-yasnippet)
+;; (setq helm-yas-space-match-any-greedy t)
+;; (global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 ;; popwin
 (el-get-bundle! popwin)
@@ -781,6 +782,7 @@
 ;; (setenv "PYENV_ROOT" "/usr/local/var/pyenv")
 ;; eval "$(pyenv init -)"
 ;; (el-get-bundle 'proofit404/pyenv-mode)
+;; (el-get-bundle 'dash)
 ;; (el-get-bundle 'pythonic)
 ;; (pyenv-mode)
 
@@ -842,8 +844,10 @@
 (setq tramp-default-method "scp")
 
 ;;; フォント周り
-;; (set-face-attribute 'default nil :family "IPAGothic" :height 160)
-(set-face-attribute 'default nil :family "Menlo" :height 140)
+(if (eq system-type 'darwin)
+    (set-face-attribute 'default nil :family "IPAGothic" :height 140)
+    ;; (set-face-attribute 'default nil :family "Menlo" :height 140)
+  (set-face-attribute 'default nil :family "IPAGothic" :height 120)(set-face-attribute 'default nil :family "IPAGothic" :height 120))
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
                              :size 16))
@@ -893,8 +897,15 @@
   (setq scheme-program-name "/usr/bin/gosh -i"))
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-(add-hook 'cmuscheme-load-map
-          '(lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme)))
+(setq cmuscheme-load-hook
+      '((lambda () (define-key scheme-mode-map (kbd "C-c C-p") 'run-scheme))))
+
+;; (el-get-bundle 'cedet)
+
+(el-get-bundle 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
 
 ;; (el-get-bundle 'peterwang/folding.el :features folding)
 ;; (folding-mode-add-find-file-hook)
