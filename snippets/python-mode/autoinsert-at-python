@@ -2,6 +2,7 @@
 # name: autoinsert-at-python
 # key: autoinsert
 # --
+# $1
 import scipy as sp
 import matplotlib.pyplot as plt
 import pandas as pd
