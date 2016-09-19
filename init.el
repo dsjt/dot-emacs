@@ -343,7 +343,9 @@
         ("w" "8 days agenda"
          ((agenda "TODO" ((org-agenda-ndays 8)
                           (org-agenda-start-day "-1")
-                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))))))))
+                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
+                          (org-agenda-columns-add-appointments-to-effort-sum t)
+                          ))))))
 (setq org-agenda-columns-add-appointments-to-effort-sum t)
 (add-hook 'org-timer-set-hook 'org-clock-in)
 (add-hook 'org-timer-done-hook 'org-clock-out)
