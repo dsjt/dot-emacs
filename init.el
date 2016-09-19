@@ -380,7 +380,7 @@
 
 ;; column
 (setq org-columns-default-format
-      "%50ITEM{Task} %TODO %8EFFORT{:} %6CLOCKSUM{Total}")
+      "%50ITEM{Task} %TODO %8EFFORT{:} %6CLOCKSUM_T{Total}")
 
 ;; export
 ;; org->latex
@@ -845,8 +845,8 @@
 
 ;;; フォント周り
 (if (eq system-type 'darwin)
-    (set-face-attribute 'default nil :family "IPAGothic" :height 140)
-    ;; (set-face-attribute 'default nil :family "Menlo" :height 140)
+    ;; (set-face-attribute 'default nil :family "IPAGothic" :height 140)
+    (set-face-attribute 'default nil :family "Menlo" :height 140)
   (set-face-attribute 'default nil :family "IPAGothic" :height 120)(set-face-attribute 'default nil :family "IPAGothic" :height 120))
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
