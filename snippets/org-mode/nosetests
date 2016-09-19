@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: nosetests
+# key: nosetests
+# --
+#+begin_src python :tangle test_$0
+import tempfile
+import os
+import shutil
+import numpy as np
+
+TEST_FOLDER = tempfile.mkdtemp()
+ORIGINAL_FOLDER = os.getcwd()
+
+def setup():
+    os.chidr(TEST_FOLDER)
+
+def teardown():
+    os.chdir(ORIGINAL_FOLDER)
+    shtil.rmtree(TEST_FOLDER)
+#+end_src

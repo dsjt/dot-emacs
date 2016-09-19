@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sklearn.preprocessing.LabelEncoder
+# key: sklearn
+# --
+from sklearn.preprocessing import LabelEncoder
+$0

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: kits for plt
+# key: plts
+# --
+plt.clf()
+$0
+plt.xlabel("$1")
+plt.ylabel("$2")
+plt.legend()
+plt.title("$3")
+plt.savefig("${3:$(apply #'concat (loop for word in (split-string yas-text) when (> 4 (length word)) collect (capitalize word) else collect (capitalize (substring word 0 4))))}.png")
+plt.show()

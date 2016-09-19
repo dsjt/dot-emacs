@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mfcc
+# key: mfcc
+# --
+from scikits.talkbox.features import mfcc

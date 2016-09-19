@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.linear_model.LogisticRegression
+# key: sklearn
+# --
+from sklearn.linear_model import LogisticRegression
