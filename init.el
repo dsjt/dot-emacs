@@ -534,12 +534,14 @@
 ;; yasnippet
 (el-get-bundle yasnippet)
 (yas-global-mode 1)
-(global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
-;; (el-get-bundle helm-c-yasnippet)
+;; (el-get-bundle emacs-jp/helm-c-yasnippet)
 ;; (setq helm-yas-space-match-any-greedy t)
+;; (yas-load-directory "~/.emacs.d/snippets/")
+;; (global-unset-key (kbd "C-x i"))
 ;; (global-set-key (kbd "C-x i i") 'helm-yas-complete)
+
 
 ;; popwin
 (el-get-bundle! popwin)
