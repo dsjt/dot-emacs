@@ -37,6 +37,7 @@
 (global-set-key (kbd "C-:") 'recenter-top-bottom)
 (global-set-key (kbd "C-x C-l") 'load-file)
 (global-set-key (kbd "C-l C-r") 'revert-buffer)
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
 
 ;; basic configuration
 (setq inhibit-startup-screen t)
@@ -534,12 +535,12 @@
 ;; yasnippet
 (el-get-bundle yasnippet)
 (yas-global-mode 1)
+(global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
 ;; (el-get-bundle emacs-jp/helm-c-yasnippet)
 ;; (setq helm-yas-space-match-any-greedy t)
 ;; (yas-load-directory "~/.emacs.d/snippets/")
-;; (global-unset-key (kbd "C-x i"))
 ;; (global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 
