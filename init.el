@@ -787,6 +787,9 @@
 ;; (el-get-bundle 'dash)
 ;; (el-get-bundle 'pythonic)
 ;; (pyenv-mode)
+;; ごまかし
+(if (eq system-type 'darwin)
+    (setq python-shell-interpreter "/usr/local/var/pyenv/shims/python"))
 
 ;; jedi
 (el-get-bundle jedi)
@@ -871,8 +874,8 @@
 (auto-insert-mode)
 (setq auto-insert-directory "~/.emacs.d/template/")
 (setq auto-insert-query nil)
-(define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
-(define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
+;; (define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
+;; (define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
 
 ;; dokuwiki
 (el-get-bundle ox-wk :type git :url "git@github.com:w-vi/ox-wk.el")
@@ -911,6 +914,9 @@
 
 ;; (el-get-bundle 'peterwang/folding.el :features folding)
 ;; (folding-mode-add-find-file-hook)
+
+;; json
+(el-get-bundle 'json-mode)
 
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
