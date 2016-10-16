@@ -69,7 +69,8 @@
 (transient-mark-mode 1)
 (setq mark-ring-max 64
       kill-whole-line t
-      visible-bell nil)
+      visible-bell nil
+      ring-bell-function 'ignore)
 (ffap-bindings)
 (put 'narrow-to-region 'disabled nil)
 (global-visual-line-mode 1)
@@ -261,8 +262,13 @@
          ("Archives"
           (extension "zip" "rar" "gz" "bz2" "tar"))
          ("python"
-          (extension "py")))))
+          (extension "py"))
+         ("cpp"
+          (extension "cpp"))
+         ("h"
+          (extension "h")))))
 (add-hook 'dired-mode-hook '(lambda () (dired-filter-group-mode 1)))
+(define-key dired-mode-map (kbd ")") #'dired-filter-group-mode)
 
 ;; my/dired-config
 ;;;###autoload
@@ -538,10 +544,10 @@
 (global-unset-key (kbd "C-x i"))
 (global-set-key (kbd "C-x i v") 'yas-visit-snippet-file)
 (global-set-key (kbd "C-x i n") 'yas-new-snippet)
-;; (el-get-bundle emacs-jp/helm-c-yasnippet)
-;; (setq helm-yas-space-match-any-greedy t)
-;; (yas-load-directory "~/.emacs.d/snippets/")
-;; (global-set-key (kbd "C-x i i") 'helm-yas-complete)
+(el-get-bundle emacs-jp/helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(yas-load-directory "~/.emacs.d/snippets/")
+(global-set-key (kbd "C-x i i") 'helm-yas-complete)
 
 
 ;; popwin
@@ -635,7 +641,7 @@
 (defvar my/open-command nil)
 (if (eq system-type 'darwin)
     (setq my/open-command "open")
-  (setq my/open-command "nautilus"))
+  (setq my/open-command "exinautilus"))
 ;;;###autoload
 (defun start-nautilus ()
   (interactive)
@@ -648,17 +654,11 @@
   (interactive)
   (let ((dd (expand-file-name default-directory)))
     (async-start-process "gnome-terminal" "gnome-terminal" 'ignore default-directory)))
-(global-set-key (kbd "C-\\ c") 'start-gnome-terminal)
-(global-set-key (kbd "C-\\ E") 'eshell)
-(global-set-key (kbd "C-\\ M-e") 'my/popup-eshell)
 ;;;###autoload
 (defun start-mac-terminal ()
   (interactive)
   (let ((dd (expand-file-name default-directory)))
     (async-start-process "terminal" "open" 'ignore "-a" "Terminal" dd)))
-(global-set-key (kbd "C-¥ c") 'start-mac-terminal)
-(global-set-key (kbd "C-¥ E") 'eshell)
-(global-set-key (kbd "C-¥ M-e") 'my/popup-eshell)
 ;;;###autoload
 (defun my/popup-eshell (arg)
   (interactive "p")
@@ -666,7 +666,15 @@
     (save-window-excursion
       (setq eb (eshell arg)))
     (popwin:popup-buffer-tail eb)))
-(global-set-key (kbd "C-¥ 9") 'popwin:stick-popup-window)
+(cond ((eq system-type 'darwin)
+       (global-set-key (kbd "C-\\ c") 'start-mac-terminal)
+       (global-set-key (kbd "C-\\ E") 'eshell)
+       (global-set-key (kbd "C-\\ M-e") 'my/popup-eshell))
+      (else
+       (global-set-key (kbd "C-\\ c") 'start-gnome-terminal)
+       (global-set-key (kbd "C-\\ E") 'eshell)
+       (global-set-key (kbd "C-\\ M-e") 'my/popup-eshell)))
+(global-set-key (kbd "C-\\ 9") 'popwin:stick-popup-window)
 (global-set-key (kbd "C-\\ 9") 'popwin:stick-popup-window)
 
 ;; inhibit-splash-screen
@@ -853,8 +861,8 @@
 
 ;;; フォント周り
 (if (eq system-type 'darwin)
-    ;; (set-face-attribute 'default nil :family "IPAGothic" :height 140)
-    (set-face-attribute 'default nil :family "Menlo" :height 140)
+    (set-face-attribute 'default nil :family "IPAGothic" :height 160)
+    ;; (set-face-attribute 'default nil :family "Menlo" :height 140)
   (set-face-attribute 'default nil :family "IPAGothic" :height 120)(set-face-attribute 'default nil :family "IPAGothic" :height 120))
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
@@ -924,6 +932,13 @@
 ;; key-bindings 2
 (global-set-key (kbd "C-q M-i") 'quoted-insert)
 (global-set-key (kbd "C-x C-r") 'eval-region)
+
+;; 透明度を変更するコマンド M-x set-alpha
+;; http://qiita.com/marcy@github/items/ba0d018a03381a964f24
+(defun set-alpha (alpha-num)
+  "set frame parameter 'alpha"
+  (interactive "nAlpha: ")
+  (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
 
 ;; private
 (load-file "~/.emacs.d/private.el")
