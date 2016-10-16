@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: roman
-# key: rm	
-# binding: direct-keybinding
-# --
-{\rm $1}$0
