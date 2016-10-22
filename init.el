@@ -935,10 +935,14 @@
 
 ;; 透明度を変更するコマンド M-x set-alpha
 ;; http://qiita.com/marcy@github/items/ba0d018a03381a964f24
+;;;###autoload
 (defun set-alpha (alpha-num)
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
+
+;; clipmon
+(el-get-bundle bburns/clipmon)
 
 ;; private
 (load-file "~/.emacs.d/private.el")
