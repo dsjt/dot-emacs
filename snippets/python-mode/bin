@@ -3,4 +3,4 @@
 # key: bin
 # binding: direct-keybinding
 # --
-#! /usr/bin/python
+#!/usr/local/bin/python3
