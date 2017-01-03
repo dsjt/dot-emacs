@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.learning_curve.learning_curve
+# key: sklearn
+# --
+from sklearn.learning_curve import learning_curve

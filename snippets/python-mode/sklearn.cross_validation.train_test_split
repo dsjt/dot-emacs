@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sklearn.model_selection.train_test_split
+# key: sklearn
+# --
+from sklearn.model_selection import train_test_split
+$0

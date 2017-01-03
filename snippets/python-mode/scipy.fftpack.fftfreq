@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scipy.fftpack.fftfreq
+# key: scipy
+# --
+from scipy.fftpack import fftfreq

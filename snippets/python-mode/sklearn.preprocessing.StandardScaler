@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sklearn.preprocessing.StandardScaler
+# key: sklearn
+# --
+from sklearn.preprocessing import StandardScaler
+$0

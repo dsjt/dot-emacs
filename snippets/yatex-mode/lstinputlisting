@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lstinputlisting
+# key: lst
+# --
+\lstinputlisting[caption=$1,label=$2]{$3}$0

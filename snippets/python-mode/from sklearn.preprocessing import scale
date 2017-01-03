@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: from sklearn.preprocessing import scale
+# key: sklearn
+# --
+from sklearn.preprocessing import scale

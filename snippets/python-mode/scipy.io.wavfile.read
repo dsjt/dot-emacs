@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scipy.io.wavfile.read
+# key: scipy
+# --
+from scipy.io.wavfile import read

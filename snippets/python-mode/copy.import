@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: copy.import
+# key: copy
+# --
+import copy

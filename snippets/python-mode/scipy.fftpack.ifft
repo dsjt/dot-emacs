@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scipy.fftpack.ifft
+# key: scipy
+# --
+from scipy.fftpack import ifft

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.pipeline.Pipeline
+# key: sklearn
+# --
+from sklearn.pipeline import Pipeline

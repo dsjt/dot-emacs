@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: #include <boost/range/algorithm.hpp>
+# key: boost
+# --
+#include <boost/range/algorithm.hpp>

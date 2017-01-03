@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: listings
+# key: listings
+# --
+\usepackage{listings,jlisting}
+\lstset{language=c,
+  basicstyle=\ttfamily\scriptsize,
+  commentstyle=\textit,
+  classoffset=1,
+  keywordstyle=\bfseries,
+  frame=tRBl,
+  framesep=5pt,
+  showstringspaces=false,
+  numbers=left,
+  stepnumber=1,
+  numberstyle=\tiny,
+  tabsize=2
+}

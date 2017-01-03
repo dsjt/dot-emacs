@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: #include <boost/format.hpp>
+# key: boost
+# --
+#include <boost/format.hpp>

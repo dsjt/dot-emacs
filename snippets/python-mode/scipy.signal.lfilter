@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: scipy.signal.lfilter
+# key: scipy
+# --
+from scipy.signal import lfilter

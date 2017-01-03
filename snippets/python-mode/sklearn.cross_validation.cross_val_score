@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.cross_validation.cross_val_score
+# key: sklearn
+# --
+from sklearn.cross_validation import cross_val_score

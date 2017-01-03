@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sklearn.decomposition.PCA
+# key: sklearn
+# --
+from sklearn.decomposition import PCA
+$0

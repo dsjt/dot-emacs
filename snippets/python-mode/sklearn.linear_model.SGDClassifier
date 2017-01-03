@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.linear_model.SGDClassifier
+# key: sklearn
+# --
+from sklearn.linear_model import SGDClassifier

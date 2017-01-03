@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org-mode
+# key: org
+# --
+$0`(org-mode)`
+# Local Variables:
+# mode: org
+# End:

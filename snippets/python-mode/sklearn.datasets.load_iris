@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.datasets.load_iris
+# key: sklearn
+# --
+from sklearn.datasets import load_iris

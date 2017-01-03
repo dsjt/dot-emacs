@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.svm.SVC
+# key: sklearn
+# --
+from sklearn.svm import SVC

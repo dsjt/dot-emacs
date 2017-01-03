@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.cross_validation.StratifiedKFold
+# key: sklearn
+# --
+from sklearn.cross_validation import StratifiedKFold
