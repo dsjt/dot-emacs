@@ -1,4 +1,11 @@
 ;; for mac
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (when (eq system-type 'darwin)
   (setq mac-command-modifier (quote meta))
   (setq mac-option-modifier (quote super)))
@@ -11,6 +18,9 @@
        "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
     (goto-char (point-max))
     (eval-print-last-sexp)))
+(require 'info)
+(add-to-list 'Info-additional-directory-list "/Users/admin/.emacs.d/el-get/el-get/")
+(setq el-get-bundle-byte-compile nil)
 
 ;; server
 (require 'server)
@@ -45,18 +55,7 @@
 (setq show-paren-style 'parenthesis)
 (setq frame-title-format
       (format "%%f - Emacs@%s" (system-name)))
-(defface hlline-face
-  '((((class color)
-      (background dark))
-     (:background "gray0"))
-    (((class color)
-      (background light))
-     (:background "SeaGreen"))
-    (t
-     ()))
-  "used fave l-line.")
-(setq hl-line-face 'hlline-face)
-(global-hl-line-mode 1)
+(global-hl-line-mode t)
 (setq gc-cons-threshold (* 10 gc-cons-threshold))
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
@@ -136,56 +135,62 @@
 ;; org-mode をこの位置でロードしておくことで競合の発生を避ける
 (el-get-bundle 'org)
 
-;; restart-eamcs
 (el-get-bundle 'restart-emacs)
 
 ;; helm
-(el-get-bundle 'helm)
-(helm-mode 1)
-(setq helm-completing-read-handlers-alist
-      (append helm-completing-read-handlers-alist
-              '((ffap . nil)
-                (dired-create-directory . nil)
-                (howm-list-grep-fixed . nil))))
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-X") 'execute-extended-command)
-(global-set-key (kbd "C-x C-f") 'ffap)
-(global-set-key (kbd "C-c i") 'helm-imenu)
-(global-set-key (kbd "C-M-c") 'helm-resume)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "<f1> h") 'helm-apropos)
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-(global-unset-key (kbd "M-."))
-(global-set-key (kbd "M-.") 'helm-etags-select)
-(global-set-key (kbd "M-/") 'helm-dabbrev)
-(setq helm-ff-skip-boring-files t)
+(el-get-bundle! 'helm
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "M-X") 'execute-extended-command)
+  (global-set-key (kbd "C-x C-f") 'ffap)
+  (global-set-key (kbd "C-c i") 'helm-imenu)
+  (global-set-key (kbd "C-M-c") 'helm-resume)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "<f1> h") 'helm-apropos)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-unset-key (kbd "M-."))
+  (global-set-key (kbd "M-.") 'helm-etags-select)
+  (global-set-key (kbd "M-/") 'helm-dabbrev))
+(with-eval-after-load 'helm
+  (setq helm-completing-read-handlers-alist
+        (append helm-completing-read-handlers-alist
+                '((ffap . nil)
+                  (dired-create-directory . nil)
+                  (howm-list-grep-fixed . nil))))
+  (setq helm-ff-skip-boring-files t))
+(helm-mode)
 
 ;; helm-ag
-(el-get-bundle 'helm-ag)
-(global-set-key (kbd "C-l g") 'helm-ag)
+(el-get-bundle 'helm-ag
+  (global-set-key (kbd "C-l g") 'helm-ag))
 
 ;; recentf
-(require 'recentf)
+(require 'recentf nil t)
 (setq recentf-auto-cleanup 'never
       recentf-max-saved-items 10000)
-(el-get-bundle 'recentf-ext)
-(global-unset-key (kbd "C-z"))
-(global-set-key (kbd "C-z") 'helm-recentf)
+(el-get-bundle 'recentf-ext
+  (global-unset-key (kbd "C-z"))
+  (global-set-key (kbd "C-z") 'helm-recentf))
 
 ;; sequential-command
-(el-get-bundle 'elpa:sequential-command)
+(el-get-bundle elpa:sequential-command)
 (require 'sequential-command-config)
 (sequential-command-setup-keys)
 
 ;;color
 (add-to-list 'custom-theme-load-path "~/.emacs.d/theme/")
 (global-set-key (kbd "<f1>C-d") 'describe-face)
-(if (eq system-type 'darwin)
-    (load-theme 'misterioso t)
-  (load-theme 'charcoal-black t))
-(set-cursor-color "white")
+(el-get-bundle 'solarized-emacs)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/el-get/solarized-emacs/")
+(load-theme 'solarized-dark t)
+;; (if (eq system-type 'darwin)
+;;     (load-theme 'solarized-dark t))
+;; (if (eq system-type 'darwin)
+;;     (load-theme 'misterioso t)
+;;   (load-theme 'charcoal-black t))
+;; (set-cursor-color "white")
 
+(el-get-bundle rainbow-mode)
 ;; smartrep  ;; 使っているので注意
 (el-get-bundle! 'smartrep)
 
@@ -204,14 +209,16 @@
 (global-anzu-mode 1)
 
 ;; visual-regexp
-(el-get-bundle 'visual-regexp)
-(setq vr/default-replace-preview t)
+(el-get-bundle! 'visual-regexp)
 (global-unset-key (kbd "C-x q"))
 (global-set-key (kbd "C-x q") 'vr/query-replace)
 (global-set-key (kbd "C-S-c m") 'vr/mc-mark)
+(with-eval-after-load 'visual-regexp
+  (setq vr/default-replace-preview t)
+  (setq case-replace nil))
 
 ;; point-undo
-(el-get-bundle! 'point-undo)
+(el-get-bundle point-undo)
 (require 'point-undo)
 (global-set-key (kbd "C-.") 'point-undo)
 (global-set-key (kbd "C-M-.") 'point-redo)
@@ -220,54 +227,49 @@
 
 ;; undo-tree
 (el-get-bundle 'undo-tree)
-(setq undo-no-redo nil
-      undo-limit 600000
-      undo-strong-limit 900000)
 (global-undo-tree-mode 1)
 (global-set-key (kbd "C-M-/") 'undo-tree-redo)
+(with-eval-after-load 'undo-tree
+  (setq undo-no-redo nil
+        undo-limit 600000
+        undo-strong-limit 900000))
+
 
 ;; helm-swoop
 (el-get-bundle 'helm-swoop)
 (global-set-key (kbd "M-i") 'helm-swoop)
 
 ;; dired
-(el-get-bundle 'direx)
-(global-set-key (kbd "C-x d") 'direx:jump-to-directory)
 (el-get-bundle 'dired+)
-(setq dired-dwim-target t
-      delete-by-moving-to-trash t)
+(setq delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
   (setq trash-directory "~/.Trash"))
-(put 'dired-find-alternate-file 'disabled nil)
-
-;; diredで開いたpdfをrecentfに追加するための設定．
-(defadvice dired-find-file (before add-recentf)
-  (let ((file (dired-filename-at-point)))
-    (when file
-      (recentf-add-file file))))
-(ad-activate 'dired-find-file)
+(with-eval-after-load 'dired
+  (setq dired-dwim-target t)
+  (put 'dired-find-alternate-file 'disabled nil)
+  ;; diredで開いたpdfをrecentfに追加するための設定．
+  (defadvice dired-find-file (before add-recentf)
+    (let ((file (dired-filename-at-point)))
+      (when file
+        (recentf-add-file file))))
+  (ad-activate 'dired-find-file))
 
 ;; dired-hacks
 (el-get-bundle 'dired-hacks)
-(el-get-bundle! 'f)
+(el-get-bundle 'f)
 (require 'dired-filter)
 (setq dired-filter-group-saved-groups
       '(("default"
-         ("PDF"
-          (extension . "pdf"))
-         ("LaTeX"
-          (extension "tex" "bib"))
-         ("Org"
-          (extension . "org"))
-         ("Archives"
-          (extension "zip" "rar" "gz" "bz2" "tar"))
-         ("python"
-          (extension "py"))
-         ("cpp"
-          (extension "cpp"))
-         ("h"
-          (extension "h")))))
-(add-hook 'dired-mode-hook '(lambda () (dired-filter-group-mode 1)))
+         ("PDF"      (extension  "pdf"))
+         ("LaTeX"    (extension "tex" "bib"))
+         ("Org"      (extension  "org"))
+         ("Archives" (extension "zip" "rar" "gz" "bz2" "tar"))
+         ("python"   (extension "py"))
+         ("cpp"      (extension "cpp"))
+         ("h"        (extension "h"))
+         ("hpp"      (extension "hpp"))
+         ("sh"       (extension "sh")))))
+(add-hook 'dired-mode-hook 'dired-filter-group-mode 1)
 (define-key dired-mode-map (kbd ")") #'dired-filter-group-mode)
 
 ;; my/dired-config
@@ -277,8 +279,8 @@
   (dired-filter-group-mode 1))
 (add-hook 'dired-mode-hook 'my/dired-config)
 
-(setq ls-lisp-use-insert-directory-program nil)
-(require 'ls-lisp)
+;; (setq ls-lisp-use-insert-directory-program nil)
+;; (require 'ls-lisp)
 
 
 ;; junk-file
@@ -292,21 +294,26 @@
 
 ;; yatex
 (el-get-bundle 'elpa:yatex)
-(setq YaTeX-kanji-code nil)
-(setq YaTeX-coding-system nil)
+(require 'yatex)
+;; (setq YaTeX-kanji-code nil)
+;; (setq YaTeX-coding-system nil)
 (add-to-list 'auto-mode-alist
              '("\\.tex\\'" . yatex-mode))
-(autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
-(setq YaTeX-fill-column 80)
-(setq YaTeX-latex-message-code nil)
-(when (eq system-type 'darwin)
-  (setq YaTeX-dvi2-command-ext-alist
-        '(("[agxk]dvi\\|dviout" . ".dvi")
-          ("ghostview\\|gv" . ".ps") ("acroread\\|[xk]pdf\\|pdfopen\\|Preview\\|TeXShop\\|Skim\\|evince\\|mupdf\\|zathura\\|okular\\|open" . ".pdf"))))
-(setq bibtex-command "pbibtex")
+;; (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
+;; (setq YaTeX-fill-column 80)
+;; (setq YaTeX-latex-message-code nil)
+;; (when (eq system-type 'darwin)
+;;   (setq YaTeX-dvi2-command-ext-alist
+;;         '(("[agxk]dvi\\|dviout" . ".dvi")
+;;           ("ghostview\\|gv" . ".ps")
+;;           ("open" . ".pdf"))))
+;; (setq bibtex-command "pbibtex")
+;; ;; latex
+;; (setq latex-run-command "platex")
 
 ;; org-mode
 (el-get-bundle 'org)
+(require 'org)
 (setq org-startup-folded nil)
 (setq org-hide-leading-stars t)
 (setq org-log-done 'time)
@@ -330,15 +337,15 @@
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'org-display-inline-images)
 
-;; org-archive
-(setq org-archive-default-command 'org-archive-to-archive-sibling)
-(define-key org-mode-map (kbd "C-S-n") 'org-metaright)
-(define-key org-mode-map (kbd "C-S-p") 'org-metaleft)
-
 ;; org-agenda
 ;; http://hpcgi1.nifty.com/spen/index.cgi?OrgMode%2fOrg%2dmode%a4%c7GTD%bc%c2%c1%a9%a1%ca%cb%dd%cc%f5%a1%cb
+(require 'org-agenda)
 (setq org-agenda-custom-commands
       '(("n" "Agenda and all TODO's" ((agenda "") (alltodo "")))
+        ("D" "1 day agenda"
+         ((agenda "TODO" ((org-agenda-ndays 1)
+                          (org-agenda-prefix-format '((agenda . "     %s %-8 e")))
+                          ))))
         ("d" "4 days agenda"
          ((agenda "TODO" ((org-agenda-ndays 4)
                           (org-agenda-start-day "-1")
@@ -448,11 +455,16 @@
 (setq org-link-file-path-type 'relative)
 
 ;; org-archive
+(require 'org-archive)
+(setq org-archive-default-command 'org-archive-to-archive-sibling)
+(define-key org-mode-map (kbd "C-S-n") 'org-metaright)
+(define-key org-mode-map (kbd "C-S-p") 'org-metaleft)
 (setq org-archive-location
       (concat "%s_archive_"
               (format-time-string "%Y::" (current-time))))
 
 (el-get-bundle 'smartparens)
+(require 'smartparens)
 (smartparens-global-mode 1)
 (smartparens-global-strict-mode -1)
 (setq sp-highlight-pair-overlay nil)
@@ -465,7 +477,7 @@
 (sp-local-pair 'org-mode "$" "$")
 (sp-local-pair 'org-mode "\"" "\"")
 (sp-use-paredit-bindings)
-;; (electric-pair-mode t)
+(electric-pair-mode t)
 
 ;; latex in org-mode
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
@@ -496,17 +508,18 @@
       howm-view-title-header "*"
       howm-menu-lang 'ja
       howm-keyword-case-fold-search t)
-(el-get-bundle! 'howm)                  ; 上との順序，重要なので変更しない
+(el-get-bundle 'howm)                  ; 上との順序，重要なので変更しない
+(require 'howm)
 (setq howm-list-recent-title t)
 (setq howm-list-all-title t)
 (setq howm-menu-expiry-hours 2)
 (setq howm-menu-schedule-days-before 10)
 (setq howm-menu-schedule-days 7)
 (setq howm-file-name-format "%Y/%m/%d-%H%M%S.org")
-(setq howm-view-grep-parse-line
-      "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
-(setq howm-excluded-file-regexp
-      "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$\\|\\.h5$")
+;; (setq howm-view-grep-parse-line
+;;       "^\\(\\([a-zA-Z]:/\\)?[^:]*\\.howm\\):\\([0-9]*\\):\\(.*\\)$")
+;; howm-excluded-file-regexp
+;;        "/\\.#\\|[~#]$\\|\\.bak$\\|/CVS/\\|\\.doc$\\|\\.pdf$\\|\\.ppt$\\|\\.xls$\\|\\.html$\\|\\.png$\\|\\.gif$\\|\\.jpg$\\|\\.h5$")
 (setq howm-menu-refresh-after-save nil)
 (setq howm-view-summary-persistent nil)
 (setq howm-template "* %cursor\n")
@@ -527,16 +540,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(cursor ((t (:background "highlightcolor"))))
  '(font-lock-keyword-face ((t (:foreground "lime green" :weight bold))))
  '(helm-selection ((t (:background "dark slate gray" :underline t))))
  '(howm-mode-title-face ((t nil)))
- '(org-todo ((t (:foreground "deep sky blue" :weight bold))))
- '(org-done ((t (:foreground "disabledControlTextColor" :strike-through "black" :weight bold))))
- '(org-agenda-date ((t (:inherit org-agenda-structure :box (:line-width 2 :style released-button)))))
- '(org-agenda-done ((t (:foreground "disabledControlTextColor" :strike-through t))))
- '(org-agenda-dimmed-todo-face ((t (:foreground "grey50" :overline nil))))
- '(outline-3 ((t (:foreground "#AFF")))))
+ '(org-agenda-done ((t (:foreground "PaleGreen" :strike-through "black"))))
+ '(org-done ((t (:foreground "green4" :strike-through "black" :weight bold)))))
 
 ;; yasnippet
 (el-get-bundle yasnippet)
@@ -576,11 +584,6 @@
     global-map "C-l" '(("{" . (shrink-window-horizontally 2))
                        ("}" . (enlarge-window-horizontally 2))))
 
-;; jaword
-(el-get-bundle 'tinysegmenter)
-(el-get-bundle 'jaword)
-(jaword-mode)
-
 ;; c言語
 (setq-default c-hungry-delete-key nil)
 (add-hook 'c++-mode-hook 'electric-indent-mode)
@@ -592,21 +595,10 @@
   (call-process "astyle" nil nil "--style=kr" "-s4" "-Y" "-M80" "-p" "-U" "-j" "-k3" "-c" (buffer-file-name))
   (revert-buffer nil t))
 
-;;;for next-line
-;;;###autoload
-(defun add-new-line-above (N)
-  "Adds new line N times above and indent."
-  (interactive "p")
-  (add-new-line-below (1+ (- N))))
-;;;###autoload
-(defun add-new-line-below (N)
-  "Add new line N times below and indent."
-  (interactive "p")
-  (setq N (or N 1))
-  (end-of-line N)
-  (comment-indent-new-line))
-(global-set-key (kbd "C-o") 'add-new-line-below)
-(global-set-key (kbd "M-o") 'add-new-line-above)
+(el-get-bundle bbatsov/crux)
+(require 'crux)
+(global-set-key (kbd "C-o") 'crux-smart-open-line)
+(global-set-key (kbd "M-o") 'crux-smart-open-line-above)
 
 ;; folding
 (require 'hideshow)
@@ -710,7 +702,8 @@
 (global-set-key (kbd "C-c M-c") 'cfw:open-org-calendar)
 
 ;; magit
-(el-get-bundle 'magit)
+(el-get-bundle magit)
+(require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (setq magit-revert-buffers t)
 
@@ -735,17 +728,25 @@
     (setq openwith-associations
           '(("\\.pdf\\'" "open" (file))
             ("\\.xlsx\\'" "open" (file))
-            ("\\.eps\\'" "open" (file))))
-  '(("\\.pdf\\'" "evince" (file))))
+            ("\\.eps\\'" "open" (file))
+            ("\\.jpg\\|\\.png\\'" "open" (file))))
+    ;; (setq openwith-associations
+    ;;       '(("\\.pdf\\'" "open" (file))
+    ;;         ("\\.xlsx\\'" "open" (file))
+    ;;         ("\\.eps\\'" "open" (file))))
+  (add-to-list 'openwith-associations ("\\.pdf\\'" "evince" (file))))
+(setq openwith-associations
+      (remove '("\\.jpg\\|\\.png\\'" "open" (file)) openwith-associations))
+(add-to-list 'openwith-associations '("\\.jpg\\|\\.png\\'" "open" (file)))
 
-;; ;; number
-;; (el-get-bundle 'number)
-;; (global-set-key (kbd "C-c C-+") 'number/add)
-;; (global-set-key (kbd "C-c C--") 'number/sub)
-;; (global-set-key (kbd "C-c C-*") 'number/multiply)
-;; (global-set-key (kbd "C-c C-/") 'number/divide)
-;; (global-set-key (kbd "C-c C-0") 'number/pad)
-;; (global-set-key (kbd "C-c C-=") 'number/eval)
+;; number
+(el-get-bundle 'number)
+(global-set-key (kbd "C-c C-+") 'number/add)
+(global-set-key (kbd "C-c C--") 'number/sub)
+(global-set-key (kbd "C-c C-*") 'number/multiply)
+(global-set-key (kbd "C-c C-/") 'number/divide)
+(global-set-key (kbd "C-c C-0") 'number/pad)
+(global-set-key (kbd "C-c C-=") 'number/eval)
 
 ;; backup
 (let ((target-dir (expand-file-name "~/"))
@@ -776,7 +777,9 @@
   (python-shell-send-region (line-beginning-position)
                             (line-end-position)))
 (define-key python-mode-map (kbd "C-c C-u") 'python-shell-send-line)
-(setq python-shell-interpreter "python")
+(setq python-shell-interpreter "python3")
+;; (setq python-shell-interpreter "ipython"
+;;       python-shell-interpreter-args "")
 (setq python-shell-interpreter-args "-i")
 (setq indent-tabs-mode nil)
 (setq indent-level 4)
@@ -799,11 +802,12 @@
 ;; (el-get-bundle 'pythonic)
 ;; (pyenv-mode)
 ;; ごまかし
-(if (eq system-type 'darwin)
-    (setq python-shell-interpreter "/usr/local/var/pyenv/shims/python"))
+;; (if (eq system-type 'darwin)
+;;     (setq python-shell-interpreter "/usr/local/var/pyenv/shims/python"))
 
 ;; jedi
 (el-get-bundle jedi)
+(require 'jedi)
 ;; (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 (setq jedi:complete-on-dot t)
@@ -834,12 +838,12 @@
 (smartrep-define-key
     global-map "C-l" '(("[" . (backward-paragraph))
                        ("]" . (forward-paragraph))))
-
 ;; auto-complete
 (el-get-bundle auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
 (global-auto-complete-mode 1)
+
 (add-to-list 'ac-modes 'YaTeX-mode)
 (setq ac-auto-start 4
       ac-auto-show-menu 0.8
@@ -863,7 +867,7 @@
 (if (eq system-type 'darwin)
     (set-face-attribute 'default nil :family "IPAGothic" :height 160)
     ;; (set-face-attribute 'default nil :family "Menlo" :height 140)
-  (set-face-attribute 'default nil :family "IPAGothic" :height 120)(set-face-attribute 'default nil :family "IPAGothic" :height 120))
+ (set-face-attribute 'default nil :family "IPAGothic" :height 120))
 (set-fontset-font t 'japanese-jisx0208
                   (font-spec :family "Hiragino Kaku Gothic ProN"
                              :size 16))
@@ -877,9 +881,9 @@
   (global-unset-key (kbd "s-,")))
 
 ;; path config これがないと，platexが実行できなかったりします．
-(el-get-bundle exec-path-from-shell)
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(el-get-bundle exec-path-from-shell
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
 
 ;; auto-insert
 (auto-insert-mode)
@@ -952,6 +956,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
-
+ '(custom-safe-themes
+   (quote
+    ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" default)))
+ '(package-selected-packages
+   (quote
+    (rainbow-mode nil yatex sequential-command rotate point-undo org number ess)))
+ '(safe-local-variable-values (quote ((major-mode . org-mode)))))
 
