@@ -11,3 +11,17 @@ url
 /recentf
 org-gcal
 /network-security.data
+/.org-id-locations
+/.python-environments
+.python-version
+abbrev_defs
+ac-comphist.dat
+bookmarks
+config/
+elpa/
+history
+image-dired/
+latex-math-preview-cache/
+saved-places
+site-lisp/
+template
