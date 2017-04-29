@@ -4,10 +4,6 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(when (eq system-type 'darwin)
-  (setq mac-command-modifier (quote meta))
-  (setq mac-option-modifier (quote super)))
-
 ;; El-Get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (unless (require 'el-get nil 'noerror)
@@ -19,6 +15,12 @@
 (require 'info)
 (add-to-list 'Info-additional-directory-list "/Users/admin/.emacs.d/el-get/el-get/")
 (setq el-get-bundle-byte-compile nil)
+
+;; Modification for Mac
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier (quote meta))
+  (setq mac-option-modifier (quote super))
+  (global-unset-key (kbd "s-,")))
 
 ;; Server
 (require 'server)
