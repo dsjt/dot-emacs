@@ -848,9 +848,9 @@
   (exec-path-from-shell-initialize))
 
 ;; auto-insert
-(auto-insert-mode)
-(setq auto-insert-directory "~/.emacs.d/template/")
-(setq auto-insert-query nil)
+;; (auto-insert-mode -1)
+;; (setq auto-insert-directory "~/.emacs.d/template/")
+;; (setq auto-insert-query nil)
 ;; (define-auto-insert '(python-mode . "python header") ["template.py" end-of-buffer])
 ;; (define-auto-insert '("\\.tex\\'" . "latex header") ["template.tex" yas-minor-mode end-of-line yas-expand])
 
