@@ -2,3 +2,4 @@ init.el~
 snippets/yatex-mode/autoinsert-at-yatex
 *.*~
 /twittering-mode.gpg
+/private.el
