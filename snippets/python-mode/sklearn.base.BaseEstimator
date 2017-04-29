@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sklearn.base.BaseEstimator
+# key: sklearn
+# --
+from sklearn.base import BaseEstimator

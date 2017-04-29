@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: print
+# key: p
+# --
+`(beginning-of-line) (insert "aie")`print($0)

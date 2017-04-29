@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: theano.tensor.shared_randomstreams.RandomStreams
+# key: theano
+# --
+from theano.tensor.shared_randomstreams import RandomStreams

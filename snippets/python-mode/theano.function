@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: theano.function
+# key: theano
+# --
+from theano import function

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: theano
+# key: theano
+# --
+import theano

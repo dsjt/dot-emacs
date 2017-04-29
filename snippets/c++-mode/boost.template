@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: boost::program_options.template
+# key: boost_program_options
+# expand-env:
+# --
+namespace po = boost::program_options;
+po::options_description option("EXPLANATION");
+ouble param;
+option.add_options()
+  ("help,h",  "ヘルプを表示")
+  ("param,p", po::value<double>(&param)->default_value(0.0),"パラメータ")
+  ;
+try{
+  po::variables_map values;
+  po::store(po::parse_command_line(argc, argv, option), values);
+  notify(values);
+  if(values.count("help")){
+    cerr<<option<<endl;
+    exit(1);
+  }
+}catch(exception &e){
+  cerr << e.what() << endl;
+  // cerr<<option<<endl;
+}

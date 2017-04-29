@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: mini
+# key: mini
+# --
+\begin{minipage}{0.5\hsize}
+$0
+\end{minipage}
