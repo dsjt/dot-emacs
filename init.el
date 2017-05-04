@@ -743,6 +743,10 @@
 (setq magit-last-seen-setup-instructions "1.4.0")
 (setq magit-revert-buffers t)
 
+;; Git-Gutter
+(el-get-bundle git-gutter)
+(global-git-gutter-mode t)
+
 ;;;###autoload
 (defun my/copy-current-file-name ()
   (interactive)
