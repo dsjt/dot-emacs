@@ -746,6 +746,7 @@
 ;; Git-Gutter
 (el-get-bundle git-gutter)
 (global-git-gutter-mode t)
+(global-set-key (kbd "C-l C-g s") 'git-gutter:stage-hunk)
 
 ;;;###autoload
 (defun my/copy-current-file-name ()
