@@ -742,6 +742,7 @@
 (require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (setq magit-revert-buffers t)
+(global-set-key (kbd "C-l C-m C-<SPC>") 'magit-status)
 
 ;; Git-Gutter
 (el-get-bundle git-gutter)
