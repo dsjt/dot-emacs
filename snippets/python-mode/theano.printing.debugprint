@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: theano.printing.debugprint
+# key: theano
+# --
+theano.printing.debugprint($0)
