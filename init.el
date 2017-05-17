@@ -748,6 +748,8 @@
 (el-get-bundle git-gutter)
 (global-git-gutter-mode t)
 (global-set-key (kbd "C-l C-g s") 'git-gutter:stage-hunk)
+(global-set-key (kbd "C-l C-g C-n") 'git-gutter:next-hunk)
+(global-set-key (kbd "C-l C-g C-p") 'git-gutter:previous-hunk)
 
 ;;;###autoload
 (defun my/copy-current-file-name ()
