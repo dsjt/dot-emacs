@@ -489,6 +489,7 @@
   (YaTeX-define-key "\C-b" 'latex-math-preview-beamer-frame))
 (add-hook 'yatex-mode-hook 'my/latex-math-preview-settings)
 (setq latex-math-preview-in-math-mode-p-func 'YaTeX-in-math-mode-p)
+(define-key org-mode-map (kbd "C-l C-p") 'latex-math-preview-expression)
 
 ;; Parenthesis
 (el-get-bundle 'smartparens)
