@@ -631,8 +631,8 @@
 ;; rotate
 (el-get-bundle 'rotate)
 (smartrep-define-key
-    global-map "C-c" '(("W" . (rotate-window))
-                       ("L" . (rotate-layout))))
+    global-map "C-l" '(("w" . (rotate-window))
+                       ("l" . (rotate-layout))))
 ;; (smartrep-define-key
 ;;     global-map "C-l" '(("{" . (shrink-window-horizontally 2))
 ;;                        ("}" . (enlarge-window-horizontally 2))))
