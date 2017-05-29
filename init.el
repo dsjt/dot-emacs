@@ -337,7 +337,15 @@
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
-
+;;;###autoload
+(defun highlight-selected-window ()
+  "Highlight selected window with a different background color."
+  (walk-windows (lambda (w)
+                  (unless (eq w (selected-window))
+                    (with-current-buffer (window-buffer w)
+                      (buffer-face-set '(:background "#0F0F01"))))))
+  (buffer-face-set 'default))
+(add-hook 'buffer-list-update-hook 'highlight-selected-window)
 ;; Region
 (el-get-bundle expand-region)
 ;; (smartrep-define-key
