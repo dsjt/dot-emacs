@@ -34,6 +34,7 @@
         mark-sexp
         mark-word
         org-ctrl-c-ctrl-c
+        org-ctrl-c-minus
         org-ctrl-c-star
         org-delete-char
         org-force-self-insert
