@@ -761,6 +761,10 @@
 (global-set-key (kbd "C-l C-g C-n") 'git-gutter:next-hunk)
 (global-set-key (kbd "C-l C-g C-p") 'git-gutter:previous-hunk)
 
+;; Git-Gutter-Fringe
+(el-get-bundle git-gutter-fringe)
+(require 'git-gutter-fringe)
+
 ;;;###autoload
 (defun my/copy-current-file-name ()
   (interactive)
