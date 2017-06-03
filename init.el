@@ -319,33 +319,35 @@
 (el-get-bundle madhat2r/madhat2r-theme)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/el-get/madhat2r-theme/")
 (load-theme 'madhat2r t)
-(set-face-attribute 'default nil :family "IPAGothic" :height 140)
-(set-fontset-font t 'japanese-jisx0208
-                  (font-spec :family "Hiragino Kaku Gothic ProN"
-                             :size 13))
-;; (progn
-;;   (set-face-attribute 'default nil :family "IPAGothic" :height 160)
-;;   (set-fontset-font t 'japanese-jisx0208
-;;                     (font-spec :family "Hiragino Kaku Gothic ProN"
-                               ;; :size 16)))
+;; (set-face-attribute 'default nil :family "IPAGothic" :height 160)
+;; (set-fontset-font t 'japanese-jisx0208
+;;                   (font-spec :family "IPAGothic"
+;;                              :size 14))
+;; (set-fontset-font t 'japanese-jisx0208
+;;                   (font-spec :family "Hiragino Kaku Gothic ProN"
+;;                              :size 14))
+(progn
+  (set-face-attribute 'default nil :family "IPAGothic" :height 140)
+  (set-fontset-font t 'japanese-jisx0208
+                    (font-spec :family "Hiragino Kaku Gothic ProN"
+                               :size 14)))
 ;; (load-theme 'whiteboard t)
 (add-to-list 'face-font-rescale-alist
              '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
+;; (add-to-list 'face-font-rescale-alist
+;;              '(("IPAGothic" . 1.2)))
 (el-get-bundle rainbow-mode)
 ;;;###autoload
 (defun set-alpha (alpha-num)
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
-;;;###autoload
-(defun highlight-selected-window ()
-  "Highlight selected window with a different background color."
-  (walk-windows (lambda (w)
-                  (unless (eq w (selected-window))
-                    (with-current-buffer (window-buffer w)
-                      (buffer-face-set '(:background "#0F0F01"))))))
-  (buffer-face-set 'default))
-(add-hook 'buffer-list-update-hook 'highlight-selected-window)
+;; (load "~/.emacs.d/site-lisp/hwin.el")
+(require 'hiwin)
+(setq hiwin-deactive-color "#030900")
+(setq hiwin-readonly-color "#030900")
+(hiwin-mode)
+
 ;; Region
 (el-get-bundle expand-region)
 ;; (smartrep-define-key
