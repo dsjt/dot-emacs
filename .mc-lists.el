@@ -21,6 +21,7 @@
         comint-delchar-or-maybe-eof
         comment-dwim
         crux-duplicate-current-line-or-region
+        crux-smart-open-line
         crux-smart-open-line-above
         delete-horizontal-space
         delete-indentation
