@@ -285,7 +285,7 @@
   (setq org-babel-python-command "python3")
   (setq org-src-preserve-indentation t)
   (setq org-babel-default-header-args:python '((:session . "my_session")
-                                               (:results . "none")
+                                               (:results . "output")
                                                (:tangle . "yes"))))
 (autoload 'org-babel-execute:sh "ob-sh.el")
 (with-eval-after-load 'org-link
