@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: import timeit
+# key: timeit
+# --
+import timeit
