@@ -4,6 +4,7 @@
 (setq mc/cmds-to-run-for-all
       '(
         YaTeX-insert-amper
+        YaTeX-insert-bar
         YaTeX-insert-braces
         YaTeX-insert-dollar
         YaTeX-insert-parens
@@ -21,6 +22,7 @@
         comint-delchar-or-maybe-eof
         comment-dwim
         crux-duplicate-current-line-or-region
+        crux-eval-and-replace
         crux-smart-open-line
         crux-smart-open-line-above
         delete-horizontal-space
