@@ -342,8 +342,8 @@
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
-;; (load "~/.emacs.d/site-lisp/hwin.el")
-(require 'hiwin)
+(load "~/.emacs.d/site-lisp/hwin.el")
+;; (require 'hiwin)
 (setq hiwin-deactive-color "#030900")
 (setq hiwin-readonly-color "#030900")
 (hiwin-mode)
