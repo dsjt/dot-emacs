@@ -977,7 +977,24 @@
     (rainbow-mode nil yatex sequential-command rotate point-undo org number ess)))
  '(safe-local-variable-values
    (quote
-    ((major-mode . org)
+    ((eval and
+           (require
+            (quote ox-extra)
+            nil t)
+           (ox-extras-activate
+            (quote
+             (ignore-headlines))))
+     (eval require
+           (quote ox-texinfo+)
+           nil t)
+     (eval require
+           (quote org-man)
+           nil t)
+     (eval require
+           (quote magit-utils)
+           nil t)
+     (bug-reference-bug-regexp . "#\\(?2:[0-9]+\\)")
+     (major-mode . org)
      (eval font-lock-add-keywords nil
            (\`
             (((\,
