@@ -486,6 +486,8 @@
              '("\\.tex\\'" . yatex-mode))
 (with-eval-after-load 'yatexprc
   (add-to-list 'YaTeX-dvi2-command-ext-alist '("open" . ".pdf")))
+(setq YaTeX-kanji-code 4)
+(setq YaTeX-coding-system 'utf-8-unix)
 (el-get-bundle 'latex-math-preview
   :type emacswiki)
 (autoload 'latex-math-preview-expression "latex-math-preview" nil t)
