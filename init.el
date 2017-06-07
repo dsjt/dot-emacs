@@ -23,8 +23,8 @@
   (global-unset-key (kbd "s-,")))
 
 ;; Server
-;;  (require 'server)
-;;  (server-start)
+(require 'server)
+(server-start)
 
 ;; A Part Of Key-Bindings
 (global-unset-key (kbd "C-l"))          ;prefix key
@@ -121,9 +121,9 @@
            fill-column)))
     (call-interactively #'fill-paragraph)))
 (global-set-key [remap fill-paragraph] #'toggle-fill-and-unfill)
-;; (global-set-key (kbd "M-q") #'fill-paragraph)
+(global-set-key (kbd "M-q") #'fill-paragraph)
 
-;; Smartrep
+;;Smartrep
 (el-get-bundle! 'smartrep)
 
 ;; Utility
@@ -342,11 +342,14 @@
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
-(load "~/.emacs.d/site-lisp/hwin.el")
+(el-get-bundle fenril058/hiwin-mode)
+(set-face-background 'hiwin-face "#023")
+(hiwin-mode 1)
+;; (load "~/.emacs.d/site-lisp/hwin.el")
 ;; (require 'hiwin)
-(setq hiwin-deactive-color "#030900")
-(setq hiwin-readonly-color "#030900")
-(hiwin-mode)
+;; (setq hiwin-deactive-color "#030900")
+;; (setq hiwin-readonly-color "#030900")
+;; (hiwin-mode)
 
 ;; Region
 (el-get-bundle expand-region)
@@ -974,7 +977,7 @@
  '(helm-external-programs-associations (quote (("png" . "open"))))
  '(package-selected-packages
    (quote
-    (rainbow-mode nil yatex sequential-command rotate point-undo org number ess)))
+    (hiwin rainbow-mode nil yatex sequential-command rotate point-undo org number ess)))
  '(safe-local-variable-values
    (quote
     ((eval and
