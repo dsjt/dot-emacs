@@ -24,7 +24,7 @@
 
 ;; Server
 ;;  (require 'server)
-;; (server-start)
+;;  (server-start)
 
 ;; A Part Of Key-Bindings
 (global-unset-key (kbd "C-l"))          ;prefix key
@@ -989,9 +989,6 @@
            nil t)
      (eval require
            (quote org-man)
-           nil t)
-     (eval require
-           (quote magit-utils)
            nil t)
      (bug-reference-bug-regexp . "#\\(?2:[0-9]+\\)")
      (major-mode . org)
