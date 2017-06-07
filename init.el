@@ -23,7 +23,7 @@
   (global-unset-key (kbd "s-,")))
 
 ;; Server
-;; asdaf (require 'server)
+;;  (require 'server)
 ;; (server-start)
 
 ;; A Part Of Key-Bindings
