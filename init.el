@@ -852,6 +852,7 @@
 ;;   ;; (add-hook 'python-mode-hook 'jedi:setup)
 ;;   (setq jedi:complete-on-dot t))
 (el-get-bundle py-autopep8)
+(require 'py-autopep8)
 ;; (el-get-bundle py-autopep8
 ;;   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 ;; py-autopep8 は 自分でいじりました. (pop kill-ring) を抜きました.
