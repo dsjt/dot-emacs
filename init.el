@@ -326,11 +326,18 @@
 ;; (set-fontset-font t 'japanese-jisx0208
 ;;                   (font-spec :family "Hiragino Kaku Gothic ProN"
 ;;                              :size 14))
+;; 通常の字のサイズ
 (progn
   (set-face-attribute 'default nil :family "IPAGothic" :height 140)
   (set-fontset-font t 'japanese-jisx0208
                     (font-spec :family "Hiragino Kaku Gothic ProN"
                                :size 14)))
+;; 大きめの時のサイズ
+(progn
+  (set-face-attribute 'default nil :family "IPAGothic" :height 160)
+  (set-fontset-font t 'japanese-jisx0208
+                    (font-spec :family "Hiragino Kaku Gothic ProN"
+                               :size 16)))
 ;; (load-theme 'whiteboard t)
 (add-to-list 'face-font-rescale-alist
              '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
