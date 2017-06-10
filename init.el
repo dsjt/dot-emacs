@@ -388,7 +388,8 @@
   (global-set-key (kbd "C-o") 'crux-smart-open-line)
   (global-set-key (kbd "M-o") 'crux-smart-open-line-above)
   (global-set-key (kbd "C-S-y") 'crux-duplicate-current-line-or-region)
-  (global-set-key (kbd "C-c e") 'crux-eval-and-replace))
+  (global-set-key (kbd "C-c e") 'crux-eval-and-replace)
+  (global-set-key (kbd "C-M-+") 'crux-duplicate-and-comment-current-line-or-region))
 (el-get-bundle! 'avy
   (global-set-key (kbd "C-M-j") 'avy-goto-char))
 (el-get-bundle 'ace-jump-mode)
@@ -851,7 +852,8 @@
 ;; (with-eval-after-load 'jedi
 ;;   ;; (add-hook 'python-mode-hook 'jedi:setup)
 ;;   (setq jedi:complete-on-dot t))
-(el-get-bundle py-autopep8)
+(el-get-bundle py-autopep8
+  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 (require 'py-autopep8)
 ;; (el-get-bundle py-autopep8
 ;;   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
