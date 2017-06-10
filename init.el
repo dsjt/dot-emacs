@@ -349,9 +349,9 @@
   "set frame parameter 'alpha"
   (interactive "nAlpha: ")
   (set-frame-parameter nil 'alpha (cons alpha-num '(90))))
-(el-get-bundle fenril058/hiwin-mode)
-(set-face-background 'hiwin-face "#023")
-(hiwin-mode 1)
+;; (el-get-bundle fenril058/hiwin-mode)
+;; (set-face-background 'hiwin-face "#023")
+;; (hiwin-mode 1)
 ;; (load "~/.emacs.d/site-lisp/hwin.el")
 ;; (require 'hiwin)
 ;; (setq hiwin-deactive-color "#030900")
