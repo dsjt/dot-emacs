@@ -59,8 +59,6 @@
   (setq-default fill-column 80)
   (setq-default line-move-visual nil)
   (setq-default cursor-type 'bar)
-  (save-place-mode 1)
-  (setq save-place t)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (defalias 'exit 'save-buffers-kill-emacs)
   (show-paren-mode +1)
@@ -328,16 +326,21 @@
 ;;                              :size 14))
 ;; 通常の字のサイズ
 (progn
-  (set-face-attribute 'default nil :family "IPAGothic" :height 140)
+  (set-face-attribute 'default nil :family "Source Code Pro" :height 140)
   (set-fontset-font t 'japanese-jisx0208
                     (font-spec :family "Hiragino Kaku Gothic ProN"
                                :size 14)))
-;; 大きめの時のサイズ
-(progn
-  (set-face-attribute 'default nil :family "IPAGothic" :height 160)
-  (set-fontset-font t 'japanese-jisx0208
-                    (font-spec :family "Hiragino Kaku Gothic ProN"
-                               :size 16)))
+;; (progn
+;;   (set-face-attribute 'default nil :family "IPAGothic" :height 140)
+;;   (set-fontset-font t 'japanese-jisx0208
+;;                     (font-spec :family "Hiragino Kaku Gothic ProN"
+;;                                :size 14)))
+;; ;; 大きめの時のサイズ
+;; (progn
+;;   (set-face-attribute 'default nil :family "IPAGothic" :height 160)
+;;   (set-fontset-font t 'japanese-jisx0208
+;;                     (font-spec :family "Hiragino Kaku Gothic ProN"
+;;                                :size 16)))
 ;; (load-theme 'whiteboard t)
 (add-to-list 'face-font-rescale-alist
              '((".*-Hiragino Kaku Gothic ProN-.*" . 1.2)))
@@ -1362,3 +1365,6 @@ that use `helm-comp-read' See `helm-M-x' for example."
     (goto-char (point-min))
     (shrink-window-if-larger-than-buffer)))
 (global-set-key (kbd "C-c C-x b") 'indirect-region)
+
+;; Rust
+(el-get-bundle rust-mode)
