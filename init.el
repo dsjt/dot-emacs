@@ -329,7 +329,7 @@
   (set-face-attribute 'default nil :family "Source Code Pro" :height 140)
   (set-fontset-font t 'japanese-jisx0208
                     (font-spec :family "Hiragino Kaku Gothic ProN"
-                               :size 14)))
+                               :size 16)))
 ;; (progn
 ;;   (set-face-attribute 'default nil :family "IPAGothic" :height 140)
 ;;   (set-fontset-font t 'japanese-jisx0208
