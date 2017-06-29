@@ -1033,11 +1033,11 @@
  ;; If there is more than one, they won't work right.
  )
 
-
-(el-get-bundle 'migemo)
-(require 'migemo)
-(setq migemo-command "cmigemo")
-(setq migemo-options '("-q" "--emacs"))
+;; 便利そうだけれども、結局あまり使えないのでオフにする
+;; (el-get-bundle 'migemo)
+;; (require 'migemo)
+;; (setq migemo-command "cmigemo")
+;; (setq migemo-options '("-q" "--emacs"))
 ;; (defun helm-compile-source--candidates-in-buffer (source)
 ;;   (helm-aif (assoc 'candidates-in-buffer source)
 ;;       (append source
@@ -1052,291 +1052,186 @@
 ;; ;; [2015-09-06 Sun]helm-match-plugin -> helm-multi-match変更の煽りを受けて
 ;; (defalias 'helm-mp-3-get-patterns 'helm-mm-3-get-patterns)
 ;; (defalias 'helm-mp-3-search-base 'helm-mm-3-search-base)
-(helm-migemo-mode 1)
+;; (helm-migemo-mode 0)
 ;; org-refile で migemo を使うために、一部変更して定義
-(cl-defun helm-comp-read (prompt collection
-                          &key
-                            test
-                            initial-input
-                            default
-                            preselect
-                            (buffer "*Helm Completions*")
-                            must-match
-                            fuzzy
-                            reverse-history
-                            (requires-pattern 0)
-                            history
-                            input-history
-                            (case-fold helm-comp-read-case-fold-search)
-                            (del-input t)
-                            (persistent-action nil)
-                            (persistent-help "DoNothing")
-                            (mode-line helm-comp-read-mode-line)
-                            help-message
-                            (keymap helm-comp-read-map)
-                            (name "Helm Completions")
-                            header-name
-                            candidates-in-buffer
-                            match-part
-                            exec-when-only-one
-                            quit-when-no-cand
-                            (volatile t)
-                            sort
-                            (fc-transformer 'helm-cr-default-transformer)
-                            hist-fc-transformer
-                            marked-candidates
-                            nomark
-                            (alistp t)
-                            (candidate-number-limit helm-candidate-number-limit)
-                            multiline
-                            allow-nest)
-  "Read a string in the minibuffer, with helm completion.
-
-It is helm `completing-read' equivalent.
-
-- PROMPT is the prompt name to use.
-
-- COLLECTION can be a list, vector, obarray or hash-table.
-  It can be also a function that receives three arguments:
-  the values string, predicate and t. See `all-completions' for more details.
-
-Keys description:
-
-- TEST: A predicate called with one arg i.e candidate.
-
-- INITIAL-INPUT: Same as input arg in `helm'.
-
-- PRESELECT: See preselect arg of `helm'.
-
-- DEFAULT: This option is used only for compatibility with regular
-  Emacs `completing-read' (Same as DEFAULT arg of `completing-read').
-
-- BUFFER: Name of helm-buffer.
-
-- MUST-MATCH: Candidate selected must be one of COLLECTION.
-
-- FUZZY: Enable fuzzy matching.
-
-- REVERSE-HISTORY: When non--nil display history source after current
-  source completion.
-
-- REQUIRES-PATTERN: Same as helm attribute, default is 0.
-
-- HISTORY: A list containing specific history, default is nil.
-  When it is non--nil, all elements of HISTORY are displayed in
-  a special source before COLLECTION.
-
-- INPUT-HISTORY: A symbol. the minibuffer input history will be
-  stored there, if nil or not provided, `minibuffer-history'
-  will be used instead.
-
-- CASE-FOLD: Same as `helm-case-fold-search'.
-
-- DEL-INPUT: Boolean, when non--nil (default) remove the partial
-  minibuffer input from HISTORY is present.
-
-- PERSISTENT-ACTION: A function called with one arg i.e candidate.
-
-- PERSISTENT-HELP: A string to document PERSISTENT-ACTION.
-
-- MODE-LINE: A string or list to display in mode line.
-  Default is `helm-comp-read-mode-line'.
-
-- KEYMAP: A keymap to use in this `helm-comp-read'.
-  (the keymap will be shared with history source)
-
-- NAME: The name related to this local source.
-
-- HEADER-NAME: A function to alter NAME, see `helm'.
-
-- EXEC-WHEN-ONLY-ONE: Bound `helm-execute-action-at-once-if-one'
-  to non--nil. (possibles values are t or nil).
-
-- VOLATILE: Use volatile attribute.
-
-- SORT: A predicate to give to `sort' e.g `string-lessp'
-  Use this only on small data as it is ineficient.
-  If you want to sort faster add a sort function to
-  FC-TRANSFORMER.
-  Note that FUZZY when enabled is already providing a sort function.
-
-- FC-TRANSFORMER: A `filtered-candidate-transformer' function
-  or a list of functions.
-
-- HIST-FC-TRANSFORMER: A `filtered-candidate-transformer'
-  function for the history source.
-
-- MARKED-CANDIDATES: If non--nil return candidate or marked candidates as a list.
-
-- NOMARK: When non--nil don't allow marking candidates.
-
-- ALISTP: \(default is non--nil\) See `helm-comp-read-get-candidates'.
-
-- CANDIDATES-IN-BUFFER: when non--nil use a source build with
-  `helm-source-in-buffer' which is much faster.
-  Argument VOLATILE have no effect when CANDIDATES-IN-BUFFER is non--nil.
-
-- MATCH-PART: Allow matching only one part of candidate.
-  See match-part documentation in `helm-source'.
-
-- ALLOW-NEST: Allow nesting this `helm-comp-read' in a helm session.
-  See `helm'.
-
-- MULTILINE: See multiline in `helm-source'.
-
-Any prefix args passed during `helm-comp-read' invocation will be recorded
-in `helm-current-prefix-arg', otherwise if prefix args were given before
-`helm-comp-read' invocation, the value of `current-prefix-arg' will be used.
-That's mean you can pass prefix args before or after calling a command
-that use `helm-comp-read' See `helm-M-x' for example."
-
-  (when (get-buffer helm-action-buffer)
-    (kill-buffer helm-action-buffer))
-  (let ((action-fn `(("Sole action (Identity)"
-                      . (lambda (candidate)
-                          (if ,marked-candidates
-                              (helm-marked-candidates)
-                              (identity candidate)))))))
-    ;; Assume completion have been already required,
-    ;; so always use 'confirm.
-    (when (eq must-match 'confirm-after-completion)
-      (setq must-match 'confirm))
-    (let* ((minibuffer-completion-confirm must-match)
-           (must-match-map (when must-match helm-comp-read-must-match-map))
-           (loc-map (if must-match-map
-                        (make-composed-keymap
-                         must-match-map (or keymap helm-map))
-                      (or keymap helm-map)))
-           (minibuffer-completion-predicate test)
-           (minibuffer-completion-table collection)
-           (helm-read-file-name-mode-line-string
-            (replace-regexp-in-string "helm-maybe-exit-minibuffer"
-                                      "helm-confirm-and-exit-minibuffer"
-                                      helm-read-file-name-mode-line-string))
-           (get-candidates
-            (lambda ()
-              (let ((cands (helm-comp-read-get-candidates
-                            collection test sort alistp)))
-                (setq helm-cr--unknown-pattern-flag nil)
-                (unless (or (eq must-match t)
-                            (string= helm-pattern "")
-                            (assoc helm-pattern cands)
-                            (assoc (intern helm-pattern) cands)
-                            (member helm-pattern cands)
-                            (member (downcase helm-pattern) cands)
-                            (member (upcase helm-pattern) cands))
-                  (setq cands (append (list
-                                       ;; Unquote helm-pattern
-                                       ;; when it is added
-                                       ;; as candidate.
-                                       (replace-regexp-in-string
-                                        "\\s\\" "" helm-pattern))
-                                      cands))
-                  (setq helm-cr--unknown-pattern-flag t))
-                (helm-cr-default default cands))))
-           (history-get-candidates
-            (lambda ()
-              (let ((cands (helm-comp-read-get-candidates
-                            history test nil alistp)))
-                (when cands
-                  (delete "" (helm-cr-default default cands))))))
-           (src-hist (helm-build-sync-source (format "%s History" name)
-                       :candidates history-get-candidates
-                       :fuzzy-match fuzzy
-                       :multiline multiline
-                       :match-part match-part
-                       :filtered-candidate-transformer
-                       (append '((lambda (candidates sources)
-                                   (cl-loop for i in candidates
-                                            ;; Input is added to history in completing-read's
-                                            ;; and may be regexp-quoted, so unquote it
-                                            ;; but check if cand is a string (it may be at this stage
-                                            ;; a symbol or nil) Issue #1553.
-                                            when (stringp i)
-                                            collect (replace-regexp-in-string "\\s\\" "" i))))
-                               (and hist-fc-transformer (helm-mklist hist-fc-transformer)))
-                       :persistent-action persistent-action
-                       :persistent-help persistent-help
-                       :keymap loc-map
-                       :mode-line mode-line
-                       :help-message help-message
-                       :action action-fn
-                       :migemo t))
-           (src (helm-build-sync-source name
-                  :candidates get-candidates
-                  :match-part match-part
-                  :multiline multiline
-                  :header-name header-name
-                  :filtered-candidate-transformer fc-transformer
-                  :requires-pattern requires-pattern
-                  :persistent-action persistent-action
-                  :persistent-help persistent-help
-                  :fuzzy-match fuzzy
-                  :keymap loc-map
-                  :mode-line mode-line
-                  :help-message help-message
-                  :action action-fn
-                  :volatile volatile
-                  :migemo t))
-           (src-1 (helm-build-in-buffer-source name
-                    :data get-candidates
-                    :match-part match-part
-                    :multiline multiline
-                    :header-name header-name
-                    :filtered-candidate-transformer fc-transformer
-                    :requires-pattern requires-pattern
-                    :persistent-action persistent-action
-                    :fuzzy-match fuzzy
-                    :keymap loc-map
-                    :persistent-help persistent-help
-                    :mode-line mode-line
-                    :help-message help-message
-                    :action action-fn
-                    :migemo t))
-           (src-list (list src-hist
-                           (if candidates-in-buffer
-                               src-1 src)))
-           (helm-execute-action-at-once-if-one exec-when-only-one)
-           (helm-quit-if-no-candidate quit-when-no-cand)
-           result)
-      (when nomark
-        (setq src-list (cl-loop for src in src-list
-                             collect (cons '(nomark) src))))
-      (when reverse-history (setq src-list (nreverse src-list)))
-      (add-hook 'helm-after-update-hook 'helm-comp-read--move-to-first-real-candidate)
-      (unwind-protect
-           (setq result (helm
-                         :sources src-list
-                         :input initial-input
-                         :default default
-                         :preselect preselect
-                         :prompt prompt
-                         :resume 'noresume
-                         :allow-nest allow-nest
-                         :candidate-number-limit candidate-number-limit
-                         :case-fold-search case-fold
-                         :history (and (symbolp input-history) input-history)
-                         :buffer buffer))
-        (remove-hook 'helm-after-update-hook 'helm-comp-read--move-to-first-real-candidate))
-      ;; Avoid adding an incomplete input to history.
-      (when (and result history del-input)
-        (cond ((and (symbolp history) ; History is a symbol.
-                    (not (symbolp (symbol-value history)))) ; Fix Issue #324.
-               ;; Be sure history is not a symbol with a nil value.
-               (helm-aif (symbol-value history) (setcar it result)))
-              ((consp history) ; A list with a non--nil value.
-               (setcar history result))
-              (t ; Possibly a symbol with a nil value.
-               (set history (list result)))))
-      (or result (helm-mode--keyboard-quit)))))
+;; 元はhelm-mode.elの記述
+;; (cl-defun helm-comp-read (prompt collection
+;;                           &key
+;;                             test
+;;                             initial-input
+;;                             default
+;;                             preselect
+;;                             (buffer "*Helm Completions*")
+;;                             must-match
+;;                             fuzzy
+;;                             reverse-history
+;;                             (requires-pattern 0)
+;;                             history
+;;                             input-history
+;;                             (case-fold helm-comp-read-case-fold-search)
+;;                             (del-input t)
+;;                             (persistent-action nil)
+;;                             (persistent-help "DoNothing")
+;;                             (mode-line helm-comp-read-mode-line)
+;;                             help-message
+;;                             (keymap helm-comp-read-map)
+;;                             (name "Helm Completions")
+;;                             header-name
+;;                             candidates-in-buffer
+;;                             match-part
+;;                             exec-when-only-one
+;;                             quit-when-no-cand
+;;                             (volatile t)
+;;                             sort
+;;                             (fc-transformer 'helm-cr-default-transformer)
+;;                             hist-fc-transformer
+;;                             marked-candidates
+;;                             nomark
+;;                             (alistp t)
+;;                             (candidate-number-limit helm-candidate-number-limit)
+;;                             multiline
+;;                             allow-nest)
+;;   (when (get-buffer helm-action-buffer)
+;;     (kill-buffer helm-action-buffer))
+;;   (let ((action-fn `(("Sole action (Identity)"
+;;                       . (lambda (candidate)
+;;                           (if ,marked-candidates
+;;                               (helm-marked-candidates)
+;;                               (identity candidate)))))))
+;;     (when (eq must-match 'confirm-after-completion)
+;;       (setq must-match 'confirm))
+;;     (let* ((minibuffer-completion-confirm must-match)
+;;            (must-match-map (when must-match helm-comp-read-must-match-map))
+;;            (loc-map (if must-match-map
+;;                         (make-composed-keymap
+;;                          must-match-map (or keymap helm-map))
+;;                       (or keymap helm-map)))
+;;            (minibuffer-completion-predicate test)
+;;            (minibuffer-completion-table collection)
+;;            (helm-read-file-name-mode-line-string
+;;             (replace-regexp-in-string "helm-maybe-exit-minibuffer"
+;;                                       "helm-confirm-and-exit-minibuffer"
+;;                                       helm-read-file-name-mode-line-string))
+;;            (get-candidates
+;;             (lambda ()
+;;               (let ((cands (helm-comp-read-get-candidates
+;;                             collection test sort alistp)))
+;;                 (setq helm-cr--unknown-pattern-flag nil)
+;;                 (unless (or (eq must-match t)
+;;                             (string= helm-pattern "")
+;;                             (assoc helm-pattern cands)
+;;                             (assoc (intern helm-pattern) cands)
+;;                             (member helm-pattern cands)
+;;                             (member (downcase helm-pattern) cands)
+;;                             (member (upcase helm-pattern) cands))
+;;                   (setq cands (append (list
+;;                                        ;; Unquote helm-pattern
+;;                                        ;; when it is added
+;;                                        ;; as candidate.
+;;                                        (replace-regexp-in-string
+;;                                         "\\s\\" "" helm-pattern))
+;;                                       cands))
+;;                   (setq helm-cr--unknown-pattern-flag t))
+;;                 (helm-cr-default default cands))))
+;;            (history-get-candidates
+;;             (lambda ()
+;;               (let ((cands (helm-comp-read-get-candidates
+;;                             history test nil alistp)))
+;;                 (when cands
+;;                   (delete "" (helm-cr-default default cands))))))
+;;            (src-hist (helm-build-sync-source (format "%s History" name)
+;;                        :candidates history-get-candidates
+;;                        :fuzzy-match fuzzy
+;;                        :multiline multiline
+;;                        :match-part match-part
+;;                        :filtered-candidate-transformer
+;;                        (append '((lambda (candidates sources)
+;;                                    (cl-loop for i in candidates
+;;                                             when (stringp i)
+;;                                             collect (replace-regexp-in-string "\\s\\" "" i))))
+;;                                (and hist-fc-transformer (helm-mklist hist-fc-transformer)))
+;;                        :persistent-action persistent-action
+;;                        :persistent-help persistent-help
+;;                        :keymap loc-map
+;;                        :mode-line mode-line
+;;                        :help-message help-message
+;;                        :action action-fn
+;;                        :migemo t))
+;;            (src (helm-build-sync-source name
+;;                   :candidates get-candidates
+;;                   :match-part match-part
+;;                   :multiline multiline
+;;                   :header-name header-name
+;;                   :filtered-candidate-transformer fc-transformer
+;;                   :requires-pattern requires-pattern
+;;                   :persistent-action persistent-action
+;;                   :persistent-help persistent-help
+;;                   :fuzzy-match fuzzy
+;;                   :keymap loc-map
+;;                   :mode-line mode-line
+;;                   :help-message help-message
+;;                   :action action-fn
+;;                   :volatile volatile
+;;                   :migemo t))
+;;            (src-1 (helm-build-in-buffer-source name
+;;                     :data get-candidates
+;;                     :match-part match-part
+;;                     :multiline multiline
+;;                     :header-name header-name
+;;                     :filtered-candidate-transformer fc-transformer
+;;                     :requires-pattern requires-pattern
+;;                     :persistent-action persistent-action
+;;                     :fuzzy-match fuzzy
+;;                     :keymap loc-map
+;;                     :persistent-help persistent-help
+;;                     :mode-line mode-line
+;;                     :help-message help-message
+;;                     :action action-fn
+;;                     :migemo t))
+;;            (src-list (list src-hist
+;;                            (if candidates-in-buffer
+;;                                src-1 src)))
+;;            (helm-execute-action-at-once-if-one exec-when-only-one)
+;;            (helm-quit-if-no-candidate quit-when-no-cand)
+;;            result)
+;;       (when nomark
+;;         (setq src-list (cl-loop for src in src-list
+;;                              collect (cons '(nomark) src))))
+;;       (when reverse-history (setq src-list (nreverse src-list)))
+;;       (add-hook 'helm-after-update-hook 'helm-comp-read--move-to-first-real-candidate)
+;;       (unwind-protect
+;;            (setq result (helm
+;;                          :sources src-list
+;;                          :input initial-input
+;;                          :default default
+;;                          :preselect preselect
+;;                          :prompt prompt
+;;                          :resume 'noresume
+;;                          :allow-nest allow-nest
+;;                          :candidate-number-limit candidate-number-limit
+;;                          :case-fold-search case-fold
+;;                          :history (and (symbolp input-history) input-history)
+;;                          :buffer buffer))
+;;         (remove-hook 'helm-after-update-hook 'helm-comp-read--move-to-first-real-candidate))
+;;       ;; Avoid adding an incomplete input to history.
+;;       (when (and result history del-input)
+;;         (cond ((and (symbolp history) ; History is a symbol.
+;;                     (not (symbolp (symbol-value history)))) ; Fix Issue #324.
+;;                ;; Be sure history is not a symbol with a nil value.
+;;                (helm-aif (symbol-value history) (setcar it result)))
+;;               ((consp history) ; A list with a non--nil value.
+;;                (setcar history result))
+;;               (t ; Possibly a symbol with a nil value.
+;;                (set history (list result)))))
+;;       (or result (helm-mode--keyboard-quit)))))
 
 ;; Set your installed path
-(setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+;; (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
 
-(setq migemo-user-dictionary nil)
-(setq migemo-regex-dictionary nil)
-(setq migemo-coding-system 'utf-8-unix)
-(migemo-init)
+;; (setq migemo-user-dictionary nil)
+;; (setq migemo-regex-dictionary nil)
+;; (setq migemo-coding-system 'utf-8-unix)
+;; (migemo-init)
 
 ;; global Indirect buffer
 (defvar indirect-mode-name nil
