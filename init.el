@@ -856,12 +856,13 @@
   (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
   )
 
-;; (el-get-bundle jedi
-;;   (add-hook 'python-mode-hook 'jedi:ac-setup))
-;; (require 'jedi)
-;; (with-eval-after-load 'jedi
-;;   ;; (add-hook 'python-mode-hook 'jedi:setup)
-;;   (setq jedi:complete-on-dot t))
+(el-get-bundle jedi
+  (add-hook 'python-mode-hook 'jedi:ac-setup)
+  (add-hook 'python-mode-hook 'jedi-mode))
+(require 'jedi)
+(with-eval-after-load 'jedi
+  ;; (add-hook 'python-mode-hook 'jedi:setup)
+  (setq jedi:complete-on-dot t))
 (el-get-bundle py-autopep8
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 (require 'py-autopep8)
