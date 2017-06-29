@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: typical_library
+# key: libs
+# --
+import sys
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import scipy as sp

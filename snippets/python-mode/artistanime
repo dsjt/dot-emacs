@@ -1,0 +1,27 @@
+# -*- mode: snippet -*-
+# name: artistanime
+# key: artistanime
+# --
+Writer = animation.writers['ffmpeg']
+writer = Writer(fps=15, metadata=dict(artist='ishida'), bitrate=1800)
+
+fig = plt.figure()
+
+# データの作成
+x = np.arange(-9, 10)
+y = np.arange(-9, 10).reshape(-1, 1)
+base = np.hypot(x, y)
+# ArtistAnimation に与える用のaxのリスト確保
+# 要素はaxのリスト(orタプル) 順に各frameで出力する図
+ims = []
+for add in np.arange(15):
+    ims.append((plt.pcolor(x, y, base + add, norm=plt.Normalize(0, 30)),))
+
+im_ani = animation.ArtistAnimation(fig2,
+                                   ims,
+                                   interval=50,
+                                   repeat_delay=3000,
+                                   blit=False,  # mac環境では基本的にFalse
+                                   )
+plt.show()
+# im_ani.save('im.mp4', writer=writer)

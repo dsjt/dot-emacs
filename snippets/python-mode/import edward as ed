@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: import edward as ed
+# key: edward
+# --
+import edward as ed

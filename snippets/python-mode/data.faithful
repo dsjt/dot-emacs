@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: datasets.faithful
+# key: datasets
+# --
+import pandas as pd
+dataset="faithful.csv"
+X = np.array(pd.read_csv(dataset))
+X_scaled = scale(X)
+$0
